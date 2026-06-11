@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIFA World Cup 2026 Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0c1445;--navy-mid:#162060;--navy-soft:#1e2d7a;
+  --teal:#00b4d8;--teal-glow:#90e0ef;
+  --magenta:#e63946;--magenta-soft:#ffd6da;
+  --gold:#f59e0b;--gold-soft:#fef3c7;
+  --green:#059669;--green-soft:#d1fae5;
+  --blue:#3b82f6;--blue-soft:#dbeafe;
+  --white:#ffffff;--bg:#f0f3f8;
+  --g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g300:#cbd5e1;
+  --g400:#94a3b8;--g500:#64748b;--g600:#475569;--g700:#334155;--g800:#1e293b;
+  --radius:14px;--radius-sm:10px;
+  --shadow:0 1px 3px rgba(12,20,69,.08),0 1px 2px rgba(12,20,69,.04);
+  --shadow-md:0 4px 12px rgba(12,20,69,.1);
+  --shadow-lg:0 12px 28px rgba(12,20,69,.12);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--g800);line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ═══════ HEADER ═══════ */
+.hdr{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 40%,var(--navy-soft) 100%);position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(12,20,69,.25);overflow:hidden}
+.hdr::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(0,180,216,.12) 0%,transparent 60%),radial-gradient(circle at 20% 80%,rgba(230,57,70,.08) 0%,transparent 50%);pointer-events:none}
+.hdr-inner{max-width:1440px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:relative}
+.hdr-brand{display:flex;align-items:center;gap:14px}
+.hdr-logo{width:52px;height:52px;background:linear-gradient(135deg,var(--gold),#fbbf24,var(--gold));border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:24px;font-weight:900;color:var(--navy);box-shadow:0 4px 16px rgba(245,158,11,.35);position:relative;overflow:hidden}
+.hdr-logo::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.3) 50%,transparent 60%);animation:shimmer 3s infinite}
+@keyframes shimmer{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+.hdr-title{display:flex;flex-direction:column}
+.hdr-title h1{font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:800;color:#fff;letter-spacing:-0.03em;line-height:1.2}
+.hdr-title h1 span{background:linear-gradient(90deg,var(--teal),var(--teal-glow));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-hosts{display:flex;align-items:center;gap:6px;margin-top:3px}
+.hdr-hosts img{width:20px;height:14px;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.hdr-hosts span{font-size:.72rem;color:rgba(255,255,255,.45);margin:0 2px}
+.hdr-date{font-size:.72rem;color:rgba(255,255,255,.4);margin-left:4px}
+.hdr-actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn{font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:600;padding:7px 14px;border-radius:8px;border:none;cursor:pointer;transition:all .15s ease;letter-spacing:.01em}
+.btn-primary{background:var(--teal);color:#fff;box-shadow:0 2px 8px rgba(0,180,216,.3)}
+.btn-primary:hover{background:#0096c7;box-shadow:0 4px 14px rgba(0,180,216,.4)}
+.btn-ghost{background:rgba(255,255,255,.07);color:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.1)}
+.btn-ghost:hover{background:rgba(255,255,255,.14);color:#fff}
+.btn-red{background:transparent;color:#fca5a5;border:1px solid rgba(252,165,165,.25)}
+.btn-red:hover{background:rgba(239,68,68,.15)}
+#file-import{display:none}
+
+/* ═══════ TABS ═══════ */
+.tabs-bar{max-width:1440px;margin:0 auto;padding:14px 24px 0}
+.tabs{display:inline-flex;gap:3px;background:var(--white);border-radius:var(--radius);padding:4px;box-shadow:var(--shadow);border:1px solid var(--g200)}
+.tab{padding:9px 18px;border:none;background:transparent;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;color:var(--g400);border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;white-space:nowrap;position:relative}
+.tab:hover{color:var(--g700)}
+.tab.on{background:var(--navy);color:#fff;box-shadow:0 2px 8px rgba(12,20,69,.2)}
+.tab .badge{position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--magenta);opacity:0;transition:opacity .2s}
+.tab .badge.show{opacity:1}
+
+/* ═══════ MAIN ═══════ */
+main{max-width:1440px;margin:0 auto;padding:16px 24px 60px}
+.pnl{display:none;animation:fadeUp .3s ease}
+.pnl.on{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ═══════ FIXTURES ═══════ */
+.fx-bar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+select.fsel{font-family:'Plus Jakarta Sans',sans-serif;font-size:.84rem;font-weight:500;padding:8px 14px;border-radius:var(--radius-sm);border:1px solid var(--g300);background:var(--white);color:var(--g700);outline:none;cursor:pointer;transition:border .15s}
+select.fsel:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,180,216,.1)}
+.progress{margin-left:auto;display:flex;align-items:center;gap:10px;background:var(--white);padding:8px 16px;border-radius:24px;border:1px solid var(--g200);box-shadow:var(--shadow)}
+.prog-ring{width:32px;height:32px}
+.prog-ring svg{transform:rotate(-90deg)}
+.prog-ring circle{fill:none;stroke-width:3.5}
+.prog-ring .bg{stroke:var(--g200)}
+.prog-ring .fill{stroke:var(--teal);stroke-linecap:round;transition:stroke-dashoffset .5s ease}
+.prog-text{font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:700;color:var(--g600)}
+.prog-sub{font-size:.68rem;font-weight:400;color:var(--g400)}
+
+.day-hdr{font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:700;color:var(--navy);margin:24px 0 10px;padding-bottom:8px;border-bottom:2px solid var(--g200);letter-spacing:-.01em;display:flex;align-items:center;gap:8px}
+.day-hdr:first-child{margin-top:0}
+.day-hdr .day-count{font-size:.68rem;font-weight:600;color:var(--g400);background:var(--g100);padding:2px 8px;border-radius:10px}
+
+.match{display:grid;grid-template-columns:1fr 130px 1fr;align-items:center;background:var(--white);border:1.5px solid var(--g200);border-radius:var(--radius-sm);padding:14px 18px;margin-bottom:7px;transition:all .2s;position:relative;overflow:hidden}
+.match::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px;transition:background .2s}
+.match:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.match.done{border-color:rgba(5,150,105,.25);background:linear-gradient(90deg,rgba(5,150,105,.02),transparent)}
+.match.done::before{background:var(--green)}
+
+.m-team{display:flex;align-items:center;gap:10px;font-size:.94rem;font-weight:600;color:var(--g800)}
+.m-team.home{justify-content:flex-end;text-align:right}
+.m-team img{width:30px;height:21px;border-radius:3px;object-fit:cover;box-shadow:0 1px 4px rgba(0,0,0,.12);flex-shrink:0}
+
+.m-center{display:flex;flex-direction:column;align-items:center;gap:2px}
+.m-scores{display:flex;align-items:center;gap:5px}
+.m-scores input{width:44px;height:40px;text-align:center;font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:800;color:var(--navy);background:var(--g50);border:2px solid var(--g200);border-radius:var(--radius-sm);outline:none;transition:all .15s}
+.m-scores input:focus{border-color:var(--teal);background:rgba(0,180,216,.04);box-shadow:0 0 0 3px rgba(0,180,216,.1)}
+.m-scores input:not([value=""]):not(:placeholder-shown){background:var(--white);border-color:var(--navy)}
+.m-scores .colon{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--g300)}
+.m-info{display:flex;align-items:center;gap:4px;margin-top:4px}
+.m-grp{font-family:'Outfit',sans-serif;font-size:.62rem;font-weight:800;color:#fff;padding:2px 7px;border-radius:5px;letter-spacing:.04em;text-transform:uppercase}
+.m-venue{font-size:.66rem;color:var(--g400);font-weight:500}
+
+.m-times{display:flex;gap:10px;margin-top:3px;font-size:.68rem;font-weight:500}
+.m-times span{display:flex;align-items:center;gap:3px;color:var(--g500)}
+.m-times em{font-style:normal;font-size:.6rem;color:var(--g400);text-transform:uppercase;font-weight:600}
+.m-time-v{color:var(--teal)}
+.m-time-u{color:var(--navy)}
+
+
+/* Group tag palette */
+.gA{background:#dc2626}.gB{background:#ea580c}.gC{background:#ca8a04}
+.gD{background:#16a34a}.gE{background:#0d9488}.gF{background:#0284c7}
+.gG{background:#4f46e5}.gH{background:#7c3aed}.gI{background:#9333ea}
+.gJ{background:#c026d3}.gK{background:#db2777}.gL{background:#e11d48}
+
+/* ═══════ STANDINGS ═══════ */
+.grp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px}
+.grp-card{background:var(--white);border:1.5px solid var(--g200);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:all .2s}
+.grp-card:hover{box-shadow:var(--shadow-lg)}
+.grp-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px}
+.grp-head h3{font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:8px}
+.grp-head .grp-dot{width:12px;height:12px;border-radius:4px}
+.grp-status{font-family:'Outfit',sans-serif;font-size:.68rem;font-weight:700;text-transform:uppercase;padding:3px 10px;border-radius:12px;letter-spacing:.04em}
+.grp-status.complete{background:var(--green-soft);color:var(--green)}
+.grp-status.partial{background:var(--gold-soft);color:var(--gold)}
+.grp-status.pending{background:var(--g100);color:var(--g400)}
+
+.stbl{width:100%;font-size:.84rem;border-collapse:collapse}
+.stbl th{padding:8px 8px;font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--g400);text-align:center;letter-spacing:.06em;border-bottom:2px solid var(--g100)}
+.stbl th.tl{text-align:left;padding-left:18px}
+.stbl td{padding:11px 8px;text-align:center;border-bottom:1px solid var(--g50);font-variant-numeric:tabular-nums}
+.stbl .tc{text-align:left;padding-left:18px;font-weight:600}
+.stbl .tc .ti{display:flex;align-items:center;gap:8px}
+.stbl .tc img{width:26px;height:18px;border-radius:3px;object-fit:cover;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.stbl .pts{font-family:'Outfit',sans-serif;font-weight:800;font-size:.98rem;color:var(--navy)}
+
+.stbl .r1{background:rgba(5,150,105,.04)}.stbl .r1 .tc{color:var(--green)}.stbl .r1 td:first-child{box-shadow:inset 4px 0 0 var(--green)}
+.stbl .r2{background:rgba(59,130,246,.03)}.stbl .r2 .tc{color:var(--blue)}.stbl .r2 td:first-child{box-shadow:inset 4px 0 0 var(--blue)}
+.stbl .r3{background:rgba(245,158,11,.03)}.stbl .r3 .tc{color:var(--gold)}.stbl .r3 td:first-child{box-shadow:inset 4px 0 0 var(--gold)}
+.stbl .r4{color:var(--g400)}
+
+.grp-foot{display:flex;gap:14px;padding:10px 18px;border-top:1px solid var(--g100);font-size:.68rem;color:var(--g400);font-weight:500}
+.grp-foot span{display:flex;align-items:center;gap:5px}
+.grp-foot .dot{width:8px;height:8px;border-radius:3px;flex-shrink:0}
+.grp-note{padding:4px 18px 10px;font-size:.72rem;color:var(--gold);font-weight:600;font-style:italic}
+
+/* ═══════ 3RD PLACE ═══════ */
+.card{background:var(--white);border:1.5px solid var(--g200);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px;margin-bottom:16px}
+.card h3{font-family:'Outfit',sans-serif;font-size:1.15rem;font-weight:800;color:var(--navy);margin-bottom:4px}
+.card .sub{font-size:.84rem;color:var(--g500);margin-bottom:16px;line-height:1.6}
+.tp{width:100%;font-size:.84rem;border-collapse:collapse}
+.tp th{padding:8px 10px;font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--g400);text-align:center;letter-spacing:.06em;border-bottom:2px solid var(--g200)}
+.tp th:nth-child(-n+3){text-align:left}
+.tp td{padding:10px;text-align:center;border-bottom:1px solid var(--g100);font-variant-numeric:tabular-nums}
+.tp td:nth-child(1),.tp td:nth-child(2){text-align:center}
+.tp td:nth-child(3){text-align:left;font-weight:600}
+.tp .ti{display:inline-flex;align-items:center;gap:8px}
+.tp .ti img{width:24px;height:17px;border-radius:2px;object-fit:cover;box-shadow:var(--shadow)}
+.tp .q{background:rgba(5,150,105,.03)}
+.tp .q td:first-child{color:var(--green);font-weight:800}
+.tp .e{color:var(--g400)}
+.badge{display:inline-block;font-family:'Outfit',sans-serif;font-size:.66rem;font-weight:700;padding:3px 10px;border-radius:12px;letter-spacing:.02em}
+.badge-g{background:var(--green-soft);color:var(--green)}
+.badge-x{background:var(--g100);color:var(--g400)}
+.empty-msg{text-align:center;padding:48px 20px;color:var(--g400);font-size:.92rem}
+
+/* ═══════ KNOCKOUT ═══════ */
+.ko-info{font-size:.84rem;color:var(--g500);margin-bottom:16px;padding:12px 18px;background:var(--white);border-radius:var(--radius-sm);border:1px solid var(--g200)}
+.ko-wrap{display:flex;gap:20px;overflow-x:auto;padding-bottom:20px;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.ko-col{flex-shrink:0;min-width:290px;scroll-snap-align:start}
+.ko-col-title{font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--g400);margin-bottom:10px;padding-bottom:7px;border-bottom:3px solid var(--g200)}
+.ko-col-title.final-title{color:var(--gold);border-color:var(--gold)}
+.ko-m{background:var(--white);border:1.5px solid var(--g200);border-radius:var(--radius-sm);margin-bottom:9px;overflow:hidden;box-shadow:var(--shadow);transition:all .2s}
+.ko-m:hover{box-shadow:var(--shadow-md)}
+.ko-m.final{border:2px solid var(--gold);box-shadow:0 4px 20px rgba(245,158,11,.15)}
+.ko-m.final .ko-hd{background:linear-gradient(90deg,rgba(245,158,11,.08),rgba(245,158,11,.02))}
+.ko-hd{display:flex;justify-content:space-between;padding:6px 12px;background:var(--g50);font-size:.66rem;font-weight:600;color:var(--g400);border-bottom:1px solid var(--g100)}
+.ko-r{display:grid;grid-template-columns:1fr 50px;align-items:center;padding:7px 12px;gap:6px;border-bottom:1px solid var(--g50)}
+.ko-r:last-of-type{border-bottom:none}
+.ko-t{font-size:.88rem;font-weight:600;color:var(--g700);display:flex;align-items:center;gap:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ko-t.ph{color:var(--g400);font-style:italic;font-weight:400;font-size:.82rem}
+.ko-t.win{color:var(--green);font-weight:800}
+.ko-t img{width:24px;height:17px;border-radius:2px;object-fit:cover;box-shadow:var(--shadow);flex-shrink:0}
+.ko-s{width:48px;height:32px;text-align:center;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;color:var(--navy);background:var(--g50);border:2px solid var(--g200);border-radius:8px;outline:none;transition:all .15s}
+.ko-s:focus{border-color:var(--teal);background:#fff;box-shadow:0 0 0 3px rgba(0,180,216,.1)}
+.ko-pen{display:flex;align-items:center;gap:6px;padding:5px 12px;font-size:.7rem;font-weight:500;color:var(--g400);border-top:1px dashed var(--g200);background:var(--g50)}
+.ko-pen input{width:34px;height:26px;text-align:center;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:700;color:var(--g600);background:var(--white);border:1.5px dashed var(--g300);border-radius:5px;outline:none}
+.ko-pen input:focus{border-style:solid;border-color:var(--blue)}
+
+/* ═══════ RULES ═══════ */
+.rules{max-width:820px}
+.rules h3{font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:800;color:var(--navy);margin:24px 0 8px;padding-top:16px;border-top:2px solid var(--g100)}
+.rules h3:first-child{margin-top:0;padding-top:0;border-top:none}
+.rules p{color:var(--g600);font-size:.9rem;margin-bottom:8px}
+.rules ol,.rules ul{margin:8px 0 16px 20px;color:var(--g600);font-size:.9rem}
+.rules li{margin-bottom:5px}
+.rules .note{background:linear-gradient(90deg,rgba(0,180,216,.06),rgba(0,180,216,.02));border-left:4px solid var(--teal);padding:12px 16px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:14px 0;font-size:.85rem;color:var(--g700)}
+.bmap table{width:100%;font-size:.82rem;border-collapse:collapse;margin-top:10px}
+.bmap th{padding:8px 10px;font-family:'Outfit',sans-serif;font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--g400);text-align:left;border-bottom:2px solid var(--g200)}
+.bmap td{padding:7px 10px;border-bottom:1px solid var(--g100);color:var(--g600)}
+.bmap td:first-child{font-weight:700;color:var(--g700)}
+
+/* ═══════ RESPONSIVE ═══════ */
+@media(max-width:768px){
+  .hdr-inner{padding:10px 14px}.tabs-bar{padding:10px 14px 0}main{padding:12px 14px 40px}
+  .grp-grid{grid-template-columns:1fr}
+  .match{grid-template-columns:1fr 110px 1fr;gap:6px;padding:10px 12px}
+  .m-team{font-size:.82rem;gap:6px}.m-team img{width:24px;height:17px}
+  .m-scores input{width:38px;height:36px;font-size:1rem}
+  .tabs{width:100%;overflow-x:auto}.tab{flex-shrink:0;padding:9px 14px;font-size:.82rem}
+}
+@media print{body{background:#fff}.hdr,.tabs-bar,.fx-bar,.hdr-actions{display:none!important}.pnl{display:block!important}.grp-card,.card,.ko-m{break-inside:avoid;box-shadow:none;border:1px solid #ccc}}
+</style>
+</head>
+<body>
+
+<div class="hdr"><div class="hdr-inner">
+  <div class="hdr-brand">
+    <div class="hdr-logo">26</div>
+    <div class="hdr-title">
+      <h1>FIFA World Cup <span>2026</span></h1>
+      <div class="hdr-hosts">
+        <img src="https://flagcdn.com/w40/us.png" alt="USA">
+        <span>&middot;</span>
+        <img src="https://flagcdn.com/w40/ca.png" alt="Canada">
+        <span>&middot;</span>
+        <img src="https://flagcdn.com/w40/mx.png" alt="Mexico">
+        <span class="hdr-date">&nbsp;11 Jun &ndash; 19 Jul 2026</span>
+      </div>
+    </div>
+  </div>
+  <div class="hdr-actions">
+    <button class="btn btn-primary" id="btn-save">Save</button>
+    <button class="btn btn-ghost" id="btn-export">Export</button>
+    <button class="btn btn-ghost" id="btn-import">Import</button>
+    <input type="file" id="file-import" accept=".json">
+    <button class="btn btn-red" id="btn-reset">Reset</button>
+  </div>
+</div></div>
+
+<div class="tabs-bar"><nav class="tabs" id="tabstrip"></nav></div>
+
+<main>
+  <section class="pnl on" id="pnl-fixtures">
+    <div class="fx-bar">
+      <select class="fsel" id="viewMode"><option value="date">By date</option><option value="group">By group</option></select>
+      <select class="fsel" id="filterGrp"><option value="all">All groups</option></select>
+      <div class="progress">
+        <div class="prog-ring"><svg viewBox="0 0 32 32"><circle class="bg" cx="16" cy="16" r="13"/><circle class="fill" id="pRing" cx="16" cy="16" r="13" stroke-dasharray="81.68" stroke-dashoffset="81.68"/></svg></div>
+        <div><div class="prog-text" id="pText">0 / 72</div><div class="prog-sub">matches scored</div></div>
+      </div>
+    </div>
+    <div id="fxBox"></div>
+  </section>
+  <section class="pnl" id="pnl-standings"><div id="stBox" class="grp-grid"></div></section>
+  <section class="pnl" id="pnl-thirdplace">
+    <div class="card"><h3>Best third-placed teams</h3>
+    <p class="sub">Top 8 advance to the Round of 32. Ranking: points, then goal difference, then goals scored. Fair-play and FIFA ranking break remaining ties (not tracked here).</p>
+    <div id="tpBox"></div></div>
+  </section>
+  <section class="pnl" id="pnl-knockout">
+    <div class="ko-info">Teams populate automatically from group results. Enter knockout scores below. For draws after extra time, record the penalty shootout result.</div>
+    <div class="ko-wrap" id="koBox"></div>
+  </section>
+  <section class="pnl" id="pnl-rules">
+    <div class="card rules">
+      <h3>Tournament format</h3>
+      <p>48 teams in 12 groups of four, playing a round-robin. The top two from each group plus the eight best third-placed teams advance to a 32-team knockout bracket: R32, R16, quarterfinals, semifinals, third-place play-off, and final. 104 matches across 39 days.</p>
+      <h3>Points</h3><p>Win = 3 &nbsp;|&nbsp; Draw = 1 &nbsp;|&nbsp; Loss = 0</p>
+      <h3>Group-stage tiebreakers (FIFA Regulations)</h3>
+      <p><strong>Two teams level on points</strong> are separated by:</p>
+      <ol><li>Goal difference (all group matches)</li><li>Goals scored (all group matches)</li><li>Head-to-head: points in the match between them</li><li>Head-to-head: goal difference</li><li>Head-to-head: goals scored</li><li>Fair-play score (cards)</li><li>FIFA World Ranking</li></ol>
+      <p><strong>Three or more teams level on points:</strong> a head-to-head mini-league is applied first (points, GD, then goals scored in the matches among those teams). If some teams separate, the remaining tied teams restart the process. After head-to-head is exhausted, the overall criteria above apply (GD, GF, fair-play, ranking).</p>
+      <div class="note">This tracker automates criteria 1 through 5, including the head-to-head mini-league for three-way ties. Fair-play and FIFA ranking are not tracked; any ties that reach those criteria are flagged for manual resolution.</div>
+      <h3>Third-place ranking</h3><p>All 12 third-placed teams are ranked by points, goal difference, goals scored, fair-play, FIFA ranking. The top 8 advance. Their R32 opponents are assigned via a FIFA matrix based on which 8 groups they come from.</p>
+      <h3>Knockout tiebreaker</h3><p>30 minutes of extra time (2 &times; 15 min). If still level, penalty shootout.</p>
+      <h3>Bracket structure</h3><p>The draw is designed so the top two seeded teams (Spain and Argentina) cannot meet before the final if both win their groups. Same for France and England.</p>
+      <h3>R32 bracket map</h3>
+      <div class="bmap"><table id="bmapTbl"><thead><tr><th>Match</th><th>Side A</th><th>Side B</th><th>Date / Venue</th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+</main>
+
+<script>
+// ═══════ FLAGS ═══════
+const FL={'Mexico':'mx','South Africa':'za','South Korea':'kr','Czechia':'cz','Canada':'ca','Bosnia and Herzegovina':'ba','Qatar':'qa','Switzerland':'ch','Brazil':'br','Morocco':'ma','Haiti':'ht','Scotland':'gb-sct','United States':'us','Paraguay':'py','Australia':'au','Türkiye':'tr','Germany':'de','Curaçao':'cw','Ivory Coast':'ci','Ecuador':'ec','Netherlands':'nl','Japan':'jp','Sweden':'se','Tunisia':'tn','Belgium':'be','Egypt':'eg','Iran':'ir','New Zealand':'nz','Spain':'es','Cape Verde':'cv','Saudi Arabia':'sa','Uruguay':'uy','France':'fr','Senegal':'sn','Iraq':'iq','Norway':'no','Argentina':'ar','Algeria':'dz','Austria':'at','Jordan':'jo','Portugal':'pt','DR Congo':'cd','Uzbekistan':'uz','Colombia':'co','England':'gb-eng','Croatia':'hr','Ghana':'gh','Panama':'pa'};
+
+// ═══════ TIMEZONES ═══════
+const VTZ={'Mexico City':'America/Mexico_City','Guadalajara':'America/Mexico_City','Monterrey':'America/Monterrey',
+'Los Angeles':'America/Los_Angeles','San Francisco':'America/Los_Angeles','Seattle':'America/Los_Angeles','Vancouver':'America/Vancouver',
+'Dallas':'America/Chicago','Houston':'America/Chicago','Kansas City':'America/Chicago',
+'Atlanta':'America/New_York','Miami':'America/New_York','New York/NJ':'America/New_York','Boston':'America/New_York','Philadelphia':'America/New_York','Toronto':'America/Toronto'};
+const UTZ=Intl.DateTimeFormat().resolvedOptions().timeZone;
+const UTZL=UTZ.split('/').pop().replace(/_/g,' ');
+function toUTC(dateStr,etTime){
+  // Convert Eastern Daylight Time (UTC-4) to UTC
+  const [h,m]=etTime.split(':').map(Number);
+  const d=new Date(dateStr+'T00:00:00Z');
+  // Midnight (00:00) listed under a date means late-night end of that day = start of next day
+  if(h===0&&m===0) d.setUTCDate(d.getUTCDate()+1);
+  d.setUTCHours(h+4,m,0,0);
+  return d;
+}
+function fmtTZ(utcDate,tz){
+  try{return utcDate.toLocaleTimeString('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit',hour12:true});}
+  catch(e){return'';}
+}
+function fmtTimeLocal(utcDate){return fmtTZ(utcDate,UTZ);}
+function fmtTimeVenue(utcDate,venue){const tz=VTZ[venue];return tz?fmtTZ(utcDate,tz):'';}
+function tzAbbr(tz){try{const p=new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'short'}).formatToParts(new Date('2026-06-15T12:00:00Z'));const t=p.find(x=>x.type==='timeZoneName');return t?t.value:'';}catch(e){return'';}}
+const USER_TZ_ABBR=tzAbbr(UTZ);
+
+const flg=(t,w=30)=>{const c=FL[t];return c?`<img src="https://flagcdn.com/w40/${c}.png" alt="${t}" width="${w}" loading="lazy" onerror="this.style.display='none'">`:'';};
+
+// ═══════ DATA ═══════
+const G={A:['Mexico','South Africa','South Korea','Czechia'],B:['Canada','Bosnia and Herzegovina','Qatar','Switzerland'],C:['Brazil','Morocco','Haiti','Scotland'],D:['United States','Paraguay','Australia','Türkiye'],E:['Germany','Curaçao','Ivory Coast','Ecuador'],F:['Netherlands','Japan','Sweden','Tunisia'],G:['Belgium','Egypt','Iran','New Zealand'],H:['Spain','Cape Verde','Saudi Arabia','Uruguay'],I:['France','Senegal','Iraq','Norway'],J:['Argentina','Algeria','Austria','Jordan'],K:['Portugal','DR Congo','Uzbekistan','Colombia'],L:['England','Croatia','Ghana','Panama']};
+
+const FX=[
+{id:1,d:'2026-06-11',g:'A',h:'Mexico',a:'South Africa',v:'Mexico City',et:'15:00'},
+{id:2,d:'2026-06-11',g:'A',h:'South Korea',a:'Czechia',v:'Guadalajara',et:'22:00'},
+{id:3,d:'2026-06-12',g:'B',h:'Canada',a:'Bosnia and Herzegovina',v:'Toronto',et:'15:00'},
+{id:4,d:'2026-06-12',g:'D',h:'United States',a:'Paraguay',v:'Los Angeles',et:'21:00'},
+{id:5,d:'2026-06-13',g:'B',h:'Qatar',a:'Switzerland',v:'San Francisco',et:'15:00'},
+{id:6,d:'2026-06-13',g:'C',h:'Brazil',a:'Morocco',v:'New York/NJ',et:'18:00'},
+{id:7,d:'2026-06-13',g:'C',h:'Haiti',a:'Scotland',v:'Boston',et:'21:00'},
+{id:8,d:'2026-06-13',g:'D',h:'Australia',a:'Türkiye',v:'Vancouver',et:'00:00'},
+{id:9,d:'2026-06-14',g:'E',h:'Germany',a:'Curaçao',v:'Houston',et:'13:00'},
+{id:10,d:'2026-06-14',g:'F',h:'Netherlands',a:'Japan',v:'Dallas',et:'16:00'},
+{id:11,d:'2026-06-14',g:'E',h:'Ivory Coast',a:'Ecuador',v:'Philadelphia',et:'19:00'},
+{id:12,d:'2026-06-14',g:'F',h:'Sweden',a:'Tunisia',v:'Monterrey',et:'22:00'},
+{id:13,d:'2026-06-15',g:'H',h:'Spain',a:'Cape Verde',v:'Atlanta',et:'12:00'},
+{id:14,d:'2026-06-15',g:'G',h:'Belgium',a:'Egypt',v:'Vancouver',et:'15:00'},
+{id:15,d:'2026-06-15',g:'H',h:'Saudi Arabia',a:'Uruguay',v:'Miami',et:'18:00'},
+{id:16,d:'2026-06-15',g:'G',h:'Iran',a:'New Zealand',v:'Los Angeles',et:'21:00'},
+{id:17,d:'2026-06-16',g:'I',h:'France',a:'Senegal',v:'New York/NJ',et:'15:00'},
+{id:18,d:'2026-06-16',g:'I',h:'Iraq',a:'Norway',v:'Boston',et:'18:00'},
+{id:19,d:'2026-06-16',g:'J',h:'Argentina',a:'Algeria',v:'Kansas City',et:'21:00'},
+{id:20,d:'2026-06-16',g:'J',h:'Austria',a:'Jordan',v:'San Francisco',et:'00:00'},
+{id:21,d:'2026-06-17',g:'K',h:'Portugal',a:'DR Congo',v:'Houston',et:'13:00'},
+{id:22,d:'2026-06-17',g:'L',h:'England',a:'Croatia',v:'Dallas',et:'16:00'},
+{id:23,d:'2026-06-17',g:'L',h:'Ghana',a:'Panama',v:'Toronto',et:'19:00'},
+{id:24,d:'2026-06-17',g:'K',h:'Uzbekistan',a:'Colombia',v:'Mexico City',et:'22:00'},
+{id:25,d:'2026-06-18',g:'A',h:'Czechia',a:'South Africa',v:'Atlanta',et:'12:00'},
+{id:26,d:'2026-06-18',g:'B',h:'Switzerland',a:'Bosnia and Herzegovina',v:'Los Angeles',et:'15:00'},
+{id:27,d:'2026-06-18',g:'B',h:'Canada',a:'Qatar',v:'Vancouver',et:'18:00'},
+{id:28,d:'2026-06-18',g:'A',h:'Mexico',a:'South Korea',v:'Guadalajara',et:'21:00'},
+{id:29,d:'2026-06-19',g:'D',h:'United States',a:'Australia',v:'Seattle',et:'15:00'},
+{id:30,d:'2026-06-19',g:'C',h:'Scotland',a:'Morocco',v:'Boston',et:'18:00'},
+{id:31,d:'2026-06-19',g:'C',h:'Brazil',a:'Haiti',v:'Philadelphia',et:'21:00'},
+{id:32,d:'2026-06-19',g:'D',h:'Türkiye',a:'Paraguay',v:'San Francisco',et:'00:00'},
+{id:33,d:'2026-06-20',g:'F',h:'Netherlands',a:'Sweden',v:'Houston',et:'13:00'},
+{id:34,d:'2026-06-20',g:'E',h:'Germany',a:'Ivory Coast',v:'Toronto',et:'16:00'},
+{id:35,d:'2026-06-20',g:'E',h:'Ecuador',a:'Curaçao',v:'Kansas City',et:'19:00'},
+{id:36,d:'2026-06-20',g:'F',h:'Tunisia',a:'Japan',v:'Monterrey',et:'22:00'},
+{id:37,d:'2026-06-21',g:'H',h:'Spain',a:'Saudi Arabia',v:'Atlanta',et:'12:00'},
+{id:38,d:'2026-06-21',g:'G',h:'Belgium',a:'Iran',v:'Los Angeles',et:'15:00'},
+{id:39,d:'2026-06-21',g:'H',h:'Uruguay',a:'Cape Verde',v:'Miami',et:'18:00'},
+{id:40,d:'2026-06-21',g:'G',h:'New Zealand',a:'Egypt',v:'Vancouver',et:'21:00'},
+{id:41,d:'2026-06-22',g:'J',h:'Argentina',a:'Austria',v:'Dallas',et:'13:00'},
+{id:42,d:'2026-06-22',g:'I',h:'France',a:'Iraq',v:'Philadelphia',et:'17:00'},
+{id:43,d:'2026-06-22',g:'I',h:'Norway',a:'Senegal',v:'New York/NJ',et:'20:00'},
+{id:44,d:'2026-06-22',g:'J',h:'Jordan',a:'Algeria',v:'San Francisco',et:'00:00'},
+{id:45,d:'2026-06-23',g:'K',h:'Portugal',a:'Uzbekistan',v:'Houston',et:'13:00'},
+{id:46,d:'2026-06-23',g:'L',h:'England',a:'Ghana',v:'Boston',et:'16:00'},
+{id:47,d:'2026-06-23',g:'L',h:'Panama',a:'Croatia',v:'Toronto',et:'19:00'},
+{id:48,d:'2026-06-23',g:'K',h:'Colombia',a:'DR Congo',v:'Guadalajara',et:'22:00'},
+{id:49,d:'2026-06-24',g:'B',h:'Switzerland',a:'Canada',v:'Vancouver',et:'15:00'},
+{id:50,d:'2026-06-24',g:'B',h:'Bosnia and Herzegovina',a:'Qatar',v:'Seattle',et:'15:00'},
+{id:51,d:'2026-06-24',g:'C',h:'Scotland',a:'Brazil',v:'Miami',et:'18:00'},
+{id:52,d:'2026-06-24',g:'C',h:'Morocco',a:'Haiti',v:'Atlanta',et:'18:00'},
+{id:53,d:'2026-06-24',g:'A',h:'Czechia',a:'Mexico',v:'Mexico City',et:'21:00'},
+{id:54,d:'2026-06-24',g:'A',h:'South Africa',a:'South Korea',v:'Monterrey',et:'21:00'},
+{id:55,d:'2026-06-25',g:'E',h:'Ecuador',a:'Germany',v:'New York/NJ',et:'16:00'},
+{id:56,d:'2026-06-25',g:'E',h:'Curaçao',a:'Ivory Coast',v:'Philadelphia',et:'16:00'},
+{id:57,d:'2026-06-25',g:'F',h:'Japan',a:'Sweden',v:'Dallas',et:'19:00'},
+{id:58,d:'2026-06-25',g:'F',h:'Tunisia',a:'Netherlands',v:'Kansas City',et:'19:00'},
+{id:59,d:'2026-06-25',g:'D',h:'Türkiye',a:'United States',v:'Los Angeles',et:'22:00'},
+{id:60,d:'2026-06-25',g:'D',h:'Paraguay',a:'Australia',v:'San Francisco',et:'22:00'},
+{id:61,d:'2026-06-26',g:'I',h:'Norway',a:'France',v:'Boston',et:'15:00'},
+{id:62,d:'2026-06-26',g:'I',h:'Senegal',a:'Iraq',v:'Toronto',et:'15:00'},
+{id:63,d:'2026-06-26',g:'H',h:'Cape Verde',a:'Saudi Arabia',v:'Houston',et:'18:00'},
+{id:64,d:'2026-06-26',g:'H',h:'Uruguay',a:'Spain',v:'Guadalajara',et:'18:00'},
+{id:65,d:'2026-06-26',g:'G',h:'Egypt',a:'Iran',v:'Seattle',et:'21:00'},
+{id:66,d:'2026-06-26',g:'G',h:'New Zealand',a:'Belgium',v:'Vancouver',et:'21:00'},
+{id:67,d:'2026-06-27',g:'L',h:'Panama',a:'England',v:'New York/NJ',et:'17:00'},
+{id:68,d:'2026-06-27',g:'L',h:'Croatia',a:'Ghana',v:'Philadelphia',et:'17:00'},
+{id:69,d:'2026-06-27',g:'K',h:'Colombia',a:'Portugal',v:'Miami',et:'19:30'},
+{id:70,d:'2026-06-27',g:'K',h:'DR Congo',a:'Uzbekistan',v:'Atlanta',et:'19:30'},
+{id:71,d:'2026-06-27',g:'J',h:'Algeria',a:'Austria',v:'Kansas City',et:'21:00'},
+{id:72,d:'2026-06-27',g:'J',h:'Jordan',a:'Argentina',v:'Dallas',et:'21:00'}
+];
+
+const KO=[
+{id:73,r:'R32',d:'2026-06-28',v:'Los Angeles',et:'15:00',a:{t:'runner',g:'A'},b:{t:'runner',g:'B'}},
+{id:74,r:'R32',d:'2026-06-29',v:'Boston',et:'16:30',a:{t:'winner',g:'E'},b:{t:'third',p:['A','B','C','D','F']}},
+{id:75,r:'R32',d:'2026-06-29',v:'Monterrey',et:'21:00',a:{t:'winner',g:'F'},b:{t:'runner',g:'C'}},
+{id:76,r:'R32',d:'2026-06-29',v:'Houston',et:'13:00',a:{t:'winner',g:'C'},b:{t:'runner',g:'F'}},
+{id:77,r:'R32',d:'2026-06-30',v:'New York/NJ',et:'17:00',a:{t:'winner',g:'I'},b:{t:'third',p:['C','D','F','G','H']}},
+{id:78,r:'R32',d:'2026-06-30',v:'Dallas',et:'13:00',a:{t:'runner',g:'E'},b:{t:'runner',g:'I'}},
+{id:79,r:'R32',d:'2026-06-30',v:'Mexico City',et:'21:00',a:{t:'winner',g:'A'},b:{t:'third',p:['C','E','F','H','I']}},
+{id:80,r:'R32',d:'2026-07-01',v:'Atlanta',et:'12:00',a:{t:'winner',g:'L'},b:{t:'third',p:['E','H','I','J','K']}},
+{id:81,r:'R32',d:'2026-07-01',v:'San Francisco',et:'20:00',a:{t:'winner',g:'D'},b:{t:'third',p:['B','E','F','I','J']}},
+{id:82,r:'R32',d:'2026-07-01',v:'Seattle',et:'16:00',a:{t:'winner',g:'G'},b:{t:'third',p:['A','E','H','I','J']}},
+{id:83,r:'R32',d:'2026-07-02',v:'Toronto',et:'15:00',a:{t:'runner',g:'K'},b:{t:'runner',g:'L'}},
+{id:84,r:'R32',d:'2026-07-02',v:'Los Angeles',et:'19:00',a:{t:'winner',g:'H'},b:{t:'runner',g:'J'}},
+{id:85,r:'R32',d:'2026-07-02',v:'Vancouver',et:'21:00',a:{t:'winner',g:'B'},b:{t:'third',p:['E','F','G','I','J']}},
+{id:86,r:'R32',d:'2026-07-03',v:'Miami',et:'18:00',a:{t:'winner',g:'J'},b:{t:'runner',g:'H'}},
+{id:87,r:'R32',d:'2026-07-03',v:'Kansas City',et:'21:30',a:{t:'winner',g:'K'},b:{t:'third',p:['D','E','I','J','L']}},
+{id:88,r:'R32',d:'2026-07-03',v:'Dallas',et:'14:00',a:{t:'runner',g:'D'},b:{t:'runner',g:'G'}},
+{id:89,r:'R16',d:'2026-07-04',v:'Philadelphia',et:'17:00',a:{t:'kw',m:74},b:{t:'kw',m:77}},
+{id:90,r:'R16',d:'2026-07-04',v:'Houston',et:'13:00',a:{t:'kw',m:73},b:{t:'kw',m:75}},
+{id:91,r:'R16',d:'2026-07-05',v:'New York/NJ',et:'16:00',a:{t:'kw',m:76},b:{t:'kw',m:78}},
+{id:92,r:'R16',d:'2026-07-05',v:'Mexico City',et:'20:00',a:{t:'kw',m:79},b:{t:'kw',m:80}},
+{id:93,r:'R16',d:'2026-07-06',v:'Dallas',et:'15:00',a:{t:'kw',m:83},b:{t:'kw',m:84}},
+{id:94,r:'R16',d:'2026-07-06',v:'Seattle',et:'20:00',a:{t:'kw',m:81},b:{t:'kw',m:82}},
+{id:95,r:'R16',d:'2026-07-07',v:'Atlanta',et:'12:00',a:{t:'kw',m:86},b:{t:'kw',m:88}},
+{id:96,r:'R16',d:'2026-07-07',v:'Vancouver',et:'16:00',a:{t:'kw',m:85},b:{t:'kw',m:87}},
+{id:97,r:'QF',d:'2026-07-09',v:'Boston',et:'16:00',a:{t:'kw',m:89},b:{t:'kw',m:90}},
+{id:98,r:'QF',d:'2026-07-10',v:'Los Angeles',et:'15:00',a:{t:'kw',m:93},b:{t:'kw',m:94}},
+{id:99,r:'QF',d:'2026-07-11',v:'Miami',et:'17:00',a:{t:'kw',m:91},b:{t:'kw',m:92}},
+{id:100,r:'QF',d:'2026-07-11',v:'Kansas City',et:'21:00',a:{t:'kw',m:95},b:{t:'kw',m:96}},
+{id:101,r:'SF',d:'2026-07-14',v:'Dallas',et:'15:00',a:{t:'kw',m:97},b:{t:'kw',m:98}},
+{id:102,r:'SF',d:'2026-07-15',v:'Atlanta',et:'15:00',a:{t:'kw',m:99},b:{t:'kw',m:100}},
+{id:103,r:'3rd',d:'2026-07-18',v:'Miami',et:'17:00',a:{t:'kl',m:101},b:{t:'kl',m:102}},
+{id:104,r:'F',d:'2026-07-19',v:'New York/NJ',et:'15:00',a:{t:'kw',m:101},b:{t:'kw',m:102}}
+];
+const RN={R32:'Round of 32',R16:'Round of 16',QF:'Quarterfinals',SF:'Semifinals','3rd':'3rd Place',F:'Final'};
+
+// ═══════ STATE ═══════
+const SK='wc2026_v3';
+let S={s:{},k:{}};
+function ld(){try{const r=localStorage.getItem(SK);if(r){const p=JSON.parse(r);S.s=p.s||p.scores||{};S.k=p.k||p.koScores||{};}}catch(e){}}
+function sv(){try{localStorage.setItem(SK,JSON.stringify(S))}catch(e){}}
+
+// ═══════ SCORE HELPER ═══════
+function gs(id){const s=S.s[id];if(!s)return null;const h=parseInt(s.h,10),a=parseInt(s.a,10);return(isNaN(h)||isNaN(a))?null:{h,a};}
+
+// ═══════ STANDINGS WITH CORRECT FIFA TIEBREAKERS ═══════
+function compGroup(gk){
+  const teams=G[gk],mx=FX.filter(f=>f.g===gk),st={};
+  teams.forEach(t=>st[t]={team:t,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0});
+  let played=0;
+  mx.forEach(m=>{const s=gs(m.id);if(!s)return;played++;
+    const H=st[m.h],A=st[m.a];H.P++;A.P++;H.GF+=s.h;H.GA+=s.a;A.GF+=s.a;A.GA+=s.h;
+    if(s.h>s.a){H.W++;A.L++;H.Pts+=3}else if(s.h<s.a){A.W++;H.L++;A.Pts+=3}else{H.D++;A.D++;H.Pts++;A.Pts++}
+  });
+  teams.forEach(t=>st[t].GD=st[t].GF-st[t].GA);
+
+  // Group teams by points, then apply FIFA-correct tiebreakers per cluster
+  const byPts=teams.map(t=>st[t]).sort((a,b)=>b.Pts-a.Pts);
+  const result=[];
+  let i=0;
+  while(i<byPts.length){
+    let j=i+1;
+    while(j<byPts.length&&byPts[j].Pts===byPts[i].Pts)j++;
+    const cluster=byPts.slice(i,j);
+    if(cluster.length===1){result.push(cluster[0]);}
+    else if(cluster.length===2){result.push(...resolve2(cluster,mx));}
+    else{result.push(...resolve3plus(cluster,mx));}
+    i=j;
+  }
+  return{standings:result,played,total:mx.length};
+}
+
+// Two teams tied on points: GD→GF→H2H Pts→H2H GD→H2H GF→flag tied
+function resolve2(pair,mx){
+  const h=calcH2H(pair,mx);
+  pair.sort((a,b)=>{
+    if(b.GD!==a.GD)return b.GD-a.GD;
+    if(b.GF!==a.GF)return b.GF-a.GF;
+    const ha=h[a.team],hb=h[b.team];
+    if(hb.pts!==ha.pts)return hb.pts-ha.pts;
+    if(hb.gd!==ha.gd)return hb.gd-ha.gd;
+    if(hb.gf!==ha.gf)return hb.gf-ha.gf;
+    a.tied=true;b.tied=true;return 0;
+  });
+  return pair;
+}
+
+// 3+ teams tied on points: H2H mini-league first, then overall GD/GF
+function resolve3plus(cluster,mx){
+  const h=calcH2H(cluster,mx);
+  // Sort by H2H first
+  cluster.sort((a,b)=>{
+    const ha=h[a.team],hb=h[b.team];
+    if(hb.pts!==ha.pts)return hb.pts-ha.pts;
+    if(hb.gd!==ha.gd)return hb.gd-ha.gd;
+    if(hb.gf!==ha.gf)return hb.gf-ha.gf;
+    return 0;
+  });
+  // Find sub-clusters still tied on H2H
+  const result=[];let i=0;
+  while(i<cluster.length){
+    let j=i+1;
+    const hi=h[cluster[i].team];
+    while(j<cluster.length){
+      const hj=h[cluster[j].team];
+      if(hj.pts!==hi.pts||hj.gd!==hi.gd||hj.gf!==hi.gf)break;j++;
+    }
+    const sub=cluster.slice(i,j);
+    if(sub.length===1){result.push(sub[0]);}
+    else if(j-i===cluster.length){
+      // All still tied on H2H, fall through to overall GD→GF
+      sub.sort((a,b)=>{if(b.GD!==a.GD)return b.GD-a.GD;if(b.GF!==a.GF)return b.GF-a.GF;a.tied=true;b.tied=true;return 0;});
+      result.push(...sub);
+    }else{
+      // Sub-cluster: resolve2 or flag
+      if(sub.length===2)result.push(...resolve2(sub,mx));
+      else{sub.sort((a,b)=>{if(b.GD!==a.GD)return b.GD-a.GD;if(b.GF!==a.GF)return b.GF-a.GF;a.tied=true;b.tied=true;return 0;});result.push(...sub);}
+    }
+    i=j;
+  }
+  return result;
+}
+
+function calcH2H(teams,mx){
+  const names=teams.map(t=>t.team),h={};
+  names.forEach(t=>h[t]={pts:0,gd:0,gf:0});
+  mx.forEach(m=>{
+    if(!names.includes(m.h)||!names.includes(m.a))return;
+    const s=gs(m.id);if(!s)return;
+    h[m.h].gf+=s.h;h[m.h].gd+=(s.h-s.a);h[m.a].gf+=s.a;h[m.a].gd+=(s.a-s.h);
+    if(s.h>s.a)h[m.h].pts+=3;else if(s.h<s.a)h[m.a].pts+=3;else{h[m.h].pts++;h[m.a].pts++;}
+  });
+  return h;
+}
+
+function rankThirds(){
+  const t=[];
+  Object.keys(G).forEach(gk=>{const r=compGroup(gk);if(r.played<6)return;if(r.standings.length>=3){const s=r.standings[2];t.push({grp:gk,...s})}});
+  t.sort((a,b)=>(b.Pts-a.Pts)||(b.GD-a.GD)||(b.GF-a.GF));return t;
+}
+
+// ═══════ RENDER: FIXTURES ═══════
+function rFx(){
+  const c=document.getElementById('fxBox'),vm=document.getElementById('viewMode').value,fg=document.getElementById('filterGrp').value;
+  const list=fg==='all'?FX:FX.filter(f=>f.g===fg);
+  const groups={};
+  list.forEach(f=>{const k=vm==='date'?f.d:'Group '+f.g;(groups[k]=groups[k]||[]).push(f)});
+  let html='';
+  Object.keys(groups).sort().forEach(key=>{
+    const ct=groups[key].length;
+    html+=`<div class="day-hdr">${vm==='date'?fd(key):key}<span class="day-count">${ct} match${ct>1?'es':''}</span></div>`;
+    groups[key].forEach(f=>{
+      const s=S.s[f.id]||{h:'',a:''};
+      const done=(s.h!==''&&s.a!=='')?'done':'';
+      html+=`<div class="match ${done}">
+        <div class="m-team home">${f.h} ${flg(f.h)}</div>
+        <div class="m-center"><div class="m-scores">
+          <input type="number" min="0" max="20" data-m="${f.id}" data-s="h" value="${ev(s.h)}" placeholder="&ndash;">
+          <span class="colon">:</span>
+          <input type="number" min="0" max="20" data-m="${f.id}" data-s="a" value="${ev(s.a)}" placeholder="&ndash;">
+        </div><div class="m-info"><span class="m-grp g${f.g}">${f.g}</span><span class="m-venue">${f.v}</span></div>${f.et?`<div class="m-times">${(()=>{const u=toUTC(f.d,f.et);const vt=fmtTimeVenue(u,f.v);const lt=fmtTimeLocal(u);return '<span class="m-time-v">'+vt+' <em>venue</em></span><span class="m-time-u">'+lt+' <em>'+USER_TZ_ABBR+'</em></span>';})()}</div>`:''}
+</div>
+        <div class="m-team away">${flg(f.a)} ${f.a}</div>
+      </div>`;
+    });
+  });
+  c.innerHTML=html;
+  c.querySelectorAll('.m-scores input').forEach(inp=>inp.addEventListener('input',e=>{
+    const mid=+e.target.dataset.m,side=e.target.dataset.s;
+    if(!S.s[mid])S.s[mid]={h:'',a:''};S.s[mid][side]=e.target.value;sv();
+    const fx=e.target.closest('.match'),s2=S.s[mid];
+    (s2.h!==''&&s2.a!=='')?fx.classList.add('done'):fx.classList.remove('done');uProg();
+  }));
+  uProg();
+}
+
+function uProg(){let n=0;FX.forEach(f=>{if(gs(f.id))n++});
+  document.getElementById('pRing').style.strokeDashoffset=81.68*(1-n/72);
+  document.getElementById('pText').textContent=`${n} / 72`;}
+
+// ═══════ RENDER: STANDINGS ═══════
+function rSt(){
+  const c=document.getElementById('stBox');let html='';
+  Object.keys(G).sort().forEach(gk=>{
+    const r=compGroup(gk);
+    const cls=r.played===r.total?'complete':(r.played>0?'partial':'pending');
+    const txt=r.played===r.total?'Complete':(r.played>0?`${r.played}/${r.total}`:'Pending');
+    let tiedFlag=false;
+    html+=`<div class="grp-card"><div class="grp-head"><h3><span class="grp-dot g${gk}"></span>Group ${gk}</h3><span class="grp-status ${cls}">${txt}</span></div>`;
+    html+=`<table class="stbl"><thead><tr><th class="tl">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>`;
+    r.standings.forEach((s,i)=>{
+      if(s.tied)tiedFlag=true;
+      html+=`<tr class="r${i+1}"><td class="tc"><div class="ti">${flg(s.team,26)} ${s.team}</div></td>
+      <td>${s.P}</td><td>${s.W}</td><td>${s.D}</td><td>${s.L}</td><td>${s.GF}</td><td>${s.GA}</td><td>${fgd(s.GD)}</td><td class="pts">${s.Pts}</td></tr>`;
+    });
+    html+=`</tbody></table>`;
+    if(tiedFlag)html+=`<div class="grp-note">⚠ Teams still tied after head-to-head; fair-play / FIFA ranking needed</div>`;
+    html+=`<div class="grp-foot"><span><span class="dot" style="background:var(--green)"></span>Winner</span><span><span class="dot" style="background:var(--blue)"></span>Runner-up</span><span><span class="dot" style="background:var(--gold)"></span>3rd (may qualify)</span></div></div>`;
+  });
+  c.innerHTML=html;
+}
+
+// ═══════ RENDER: THIRD PLACE ═══════
+function rTp(){
+  const c=document.getElementById('tpBox'),T=rankThirds();
+  if(!T.length){c.innerHTML=`<div class="empty-msg">No groups completed yet. Complete all 6 matches in a group to see its third-placed team here.</div>`;return;}
+  let html=`<table class="tp"><thead><tr><th>#</th><th>Grp</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>Status</th></tr></thead><tbody>`;
+  T.forEach((t,i)=>{const q=i<8;
+    html+=`<tr class="${q?'q':'e'}"><td>${i+1}</td><td>${t.grp}</td><td><span class="ti">${flg(t.team,24)} ${t.team}</span></td>
+    <td>${t.P}</td><td>${t.W}</td><td>${t.D}</td><td>${t.L}</td><td>${t.GF}</td><td>${t.GA}</td><td>${fgd(t.GD)}</td><td style="font-weight:800">${t.Pts}</td>
+    <td><span class="badge ${q?'badge-g':'badge-x'}">${q?'Advances':'Out'}</span></td></tr>`;
+  });
+  html+=`</tbody></table>`;
+  if(T.length<12)html+=`<p style="font-size:.8rem;color:var(--g400);margin-top:12px">${T.length} of 12 groups completed.</p>`;
+  c.innerHTML=html;
+}
+
+// ═══════ RENDER: KNOCKOUT ═══════
+function koLabel(slot){
+  if(slot.t==='winner'){const r=compGroup(slot.g);return(r.played===r.total&&r.standings.length>0)?r.standings[0].team:`1${slot.g}`;}
+  if(slot.t==='runner'){const r=compGroup(slot.g);return(r.played===r.total&&r.standings.length>1)?r.standings[1].team:`2${slot.g}`;}
+  if(slot.t==='third'){const x=resThird(slot);return x||`3rd ${slot.p.join('/')}`;}
+  if(slot.t==='kw'){const w=koWin(slot.m);return w||`W${slot.m}`;}
+  if(slot.t==='kl'){const w=koWin(slot.m);if(!w)return`L${slot.m}`;const k=KO.find(x=>x.id===slot.m);const a=koLabel(k.a),b=koLabel(k.b);return a===w?b:a;}
+  return'?';
+}
+function resThird(slot){
+  const T=rankThirds();if(T.length<12)return null;const top8=T.slice(0,8);
+  const slots=KO.filter(k=>k.r==='R32'&&(k.a.t==='third'||k.b.t==='third'));
+  const used=new Set(),asgn={};
+  slots.forEach(k=>{const s=(k.a.t==='third')?k.a:k.b;for(const t of top8){if(used.has(t.team))continue;if(s.p.includes(t.grp)){asgn[k.id]=t.team;used.add(t.team);break;}}});
+  const my=KO.find(k=>(k.a===slot)||(k.b===slot));return my?asgn[my.id]||null:null;
+}
+function koWin(mid){
+  const s=S.k[mid];if(!s)return null;const h=parseInt(s.h,10),a=parseInt(s.a,10);if(isNaN(h)||isNaN(a))return null;
+  const k=KO.find(x=>x.id===mid);if(!k)return null;const ht=koLabel(k.a),at=koLabel(k.b);
+  if(h>a)return ht;if(a>h)return at;
+  const ph=s.ph!==undefined&&s.ph!==''?parseInt(s.ph,10):null,pa=s.pa!==undefined&&s.pa!==''?parseInt(s.pa,10):null;
+  if(ph!==null&&pa!==null&&!isNaN(ph)&&!isNaN(pa)){if(ph>pa)return ht;if(pa>ph)return at;}
+  return null;
+}
+function isPh(l){return/^[12]?[A-L]$/.test(l)||l.startsWith('3rd ')||l.startsWith('W')||l.startsWith('L');}
+
+function rKo(){
+  const c=document.getElementById('koBox');const rounds=['R32','R16','QF','SF','3rd','F'];let html='';
+  rounds.forEach(rnd=>{
+    const isFinalRound=rnd==='F';
+    html+=`<div class="ko-col"><div class="ko-col-title ${isFinalRound?'final-title':''}">${RN[rnd]}</div>`;
+    KO.filter(k=>k.r===rnd).forEach(m=>{
+      const aL=koLabel(m.a),bL=koLabel(m.b),s=S.k[m.id]||{},w=koWin(m.id);
+      const aW=w===aL,bW=w===bL,aP=isPh(aL),bP=isPh(bL);
+      html+=`<div class="ko-m${isFinalRound?' final':''}">
+        <div class="ko-hd"><span>M${m.id}</span><span>${m.et?((u)=>{const d=toUTC(m.d,m.et);return fmtTimeVenue(d,m.v)+' / '+fmtTimeLocal(d)+' '+USER_TZ_ABBR;})()+' &middot; ':''} ${fd(m.d,1)} &middot; ${m.v}</span></div>
+        <div class="ko-r"><span class="ko-t ${aP?'ph':''} ${aW?'win':''}">${!aP?flg(aL,24):''}${aL}</span>
+          <input type="number" min="0" max="20" class="ko-s" data-k="${m.id}" data-s="h" value="${ev(s.h||'')}"></div>
+        <div class="ko-r"><span class="ko-t ${bP?'ph':''} ${bW?'win':''}">${!bP?flg(bL,24):''}${bL}</span>
+          <input type="number" min="0" max="20" class="ko-s" data-k="${m.id}" data-s="a" value="${ev(s.a||'')}"></div>
+        <div class="ko-pen">PEN <input data-k="${m.id}" data-s="ph" value="${ev(s.ph||'')}" placeholder="&ndash;"> &ndash; <input data-k="${m.id}" data-s="pa" value="${ev(s.pa||'')}" placeholder="&ndash;"></div>
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+  c.innerHTML=html;
+  c.querySelectorAll('.ko-s, .ko-pen input').forEach(inp=>inp.addEventListener('input',e=>{
+    const mid=+e.target.dataset.k,side=e.target.dataset.s;
+    if(!S.k[mid])S.k[mid]={};S.k[mid][side]=e.target.value;sv();rKo();
+  }));
+}
+
+function rBmap(){
+  const tb=document.querySelector('#bmapTbl tbody');let h='';
+  KO.forEach(k=>{h+=`<tr><td>M${k.id}</td><td>${dS(k.a)}</td><td>${dS(k.b)}</td><td>${fd(k.d,1)} &middot; ${k.v}</td></tr>`});
+  tb.innerHTML=h;
+}
+function dS(s){if(s.t==='winner')return`Winner ${s.g}`;if(s.t==='runner')return`Runner-up ${s.g}`;if(s.t==='third')return`3rd of ${s.p.join('/')}`;if(s.t==='kw')return`W M${s.m}`;if(s.t==='kl')return`L M${s.m}`;return'?';}
+
+// ═══════ HELPERS ═══════
+function fd(d,s=0){const dt=new Date(d+'T12:00:00');return s?dt.toLocaleDateString('en-US',{month:'short',day:'numeric'}):dt.toLocaleDateString('en-US',{weekday:'short',month:'long',day:'numeric',year:'numeric'});}
+function fgd(n){return n>0?'+'+n:String(n);}
+function ev(v){return v==null?'':String(v).replace(/"/g,'&quot;');}
+
+// ═══════ TABS ═══════
+const TABS=[{id:'fixtures',label:'Fixtures'},{id:'standings',label:'Standings'},{id:'thirdplace',label:'3rd Place'},{id:'knockout',label:'Knockout'},{id:'rules',label:'Rules'}];
+const strip=document.getElementById('tabstrip');
+TABS.forEach((t,i)=>{
+  const btn=document.createElement('button');btn.className='tab'+(i===0?' on':'');btn.dataset.tab=t.id;btn.innerHTML=t.label+'<span class="badge"></span>';
+  btn.addEventListener('click',()=>{
+    strip.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
+    btn.classList.add('on');document.getElementById('pnl-'+t.id).classList.add('on');
+    if(t.id==='standings')rSt();if(t.id==='thirdplace')rTp();if(t.id==='knockout')rKo();
+  });
+  strip.appendChild(btn);
+});
+
+// ═══════ CONTROLS ═══════
+document.getElementById('btn-save').onclick=()=>{sv();const b=document.getElementById('btn-save');b.textContent='Saved ✓';setTimeout(()=>b.textContent='Save',1500);};
+document.getElementById('btn-reset').onclick=()=>{if(confirm('Reset all scores? This cannot be undone.')){S={s:{},k:{}};sv();rFx();rSt();rTp();rKo();}};
+document.getElementById('btn-export').onclick=()=>{const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='wc2026-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(u);};
+document.getElementById('btn-import').onclick=()=>document.getElementById('file-import').click();
+document.getElementById('file-import').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const p=JSON.parse(ev.target.result);if(p){S.s=p.s||p.scores||{};S.k=p.k||p.koScores||{};sv();rFx();rSt();rTp();rKo();}}catch(err){alert('Invalid file.')}};r.readAsText(f);};
+document.getElementById('viewMode').onchange=rFx;
+document.getElementById('filterGrp').onchange=rFx;
+const sel=document.getElementById('filterGrp');Object.keys(G).forEach(g=>{const o=document.createElement('option');o.value=g;o.textContent='Group '+g;sel.appendChild(o);});
+
+// ═══════ INIT ═══════
+ld();rFx();rSt();rBmap();
+
+// Show user timezone
+document.addEventListener('DOMContentLoaded',()=>{
+  const el=document.createElement('span');
+  el.style.cssText='font-size:.72rem;color:var(--g400);background:var(--g100);padding:4px 10px;border-radius:8px;white-space:nowrap;display:flex;align-items:center;gap:4px';
+  el.innerHTML='🕐 Your time: <strong style="color:var(--navy)">'+UTZL+' ('+USER_TZ_ABBR+')</strong>';
+  const bar=document.querySelector('.fx-bar');
+  if(bar)bar.insertBefore(el,bar.querySelector('.progress'));
+});
+
+</script>
+</body>
+</html>
