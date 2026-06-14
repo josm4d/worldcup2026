@@ -211,10 +211,11 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
 .mt-fp{display:flex;align-items:center;gap:8px;padding:5px 13px 7px;border-top:1px dashed var(--g200);background:var(--g50)}
 .fp-cap{font-size:.6rem;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.04em;cursor:help}
 .fp-cap em{font-style:normal;font-weight:500;text-transform:none;color:var(--g300)}
-.fp-in{display:flex;align-items:center;gap:4px;margin-left:auto}
+.fp-in{display:flex;align-items:center;gap:3px;margin-left:auto}
 .fp-in:not(:last-child){margin-left:0}
 .mt-fp .fp-in:first-of-type{margin-left:auto}
-.fp-in input{width:38px;height:26px;text-align:center;font-family:inherit;font-size:.78rem;font-weight:700;color:var(--red);background:var(--card);border:1.5px solid var(--g200);border-radius:6px;outline:none}
+.fp-minus{font-size:.78rem;font-weight:800;color:var(--red);opacity:.55}
+.fp-in input{width:34px;height:26px;text-align:center;font-family:inherit;font-size:.78rem;font-weight:700;color:var(--red);background:var(--card);border:1.5px solid var(--g200);border-radius:6px;outline:none}
 .fp-in input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,158,11,.15)}
 .fp-in input:placeholder-shown{color:var(--g400);font-weight:400}
 
@@ -555,8 +556,8 @@ function compGroup(gk){
     const H=st[m.h],A=st[m.a];H.P++;A.P++;H.GF+=s.h;H.GA+=s.a;A.GF+=s.a;A.GA+=s.h;
     if(s.h>s.a){H.W++;A.L++;H.Pts+=3}else if(s.h<s.a){A.W++;H.L++;A.Pts+=3}else{H.D++;A.D++;H.Pts++;A.Pts++}
     const rec=S.s[m.id]||{};
-    if(rec.fph!==undefined&&rec.fph!==''){H.FP+=parseInt(rec.fph,10)||0;H.fpSet=true;}
-    if(rec.fpa!==undefined&&rec.fpa!==''){A.FP+=parseInt(rec.fpa,10)||0;A.fpSet=true;}
+    if(rec.fph!==undefined&&rec.fph!==''){H.FP-=Math.abs(parseInt(rec.fph,10)||0);H.fpSet=true;}
+    if(rec.fpa!==undefined&&rec.fpa!==''){A.FP-=Math.abs(parseInt(rec.fpa,10)||0);A.fpSet=true;}
   });
   teams.forEach(t=>st[t].GD=st[t].GF-st[t].GA);
   const byPts=teams.map(t=>st[t]).sort((a,b)=>b.Pts-a.Pts);
@@ -621,9 +622,9 @@ function matchCard(f){
     +oddsHtml(f.h,f.a)
     +'<div class="mt-meta"><span class="gtag g'+f.g+'">'+f.g+'</span><span>'+f.v+'</span>'+timesHtml(f.d,f.et,f.v)
     +(filled?'<button class="col-toggle" data-collapse="'+f.id+'">collapse \u25B2</button>':'')+'</div>'
-    +'<div class="mt-fp"><span class="fp-cap" title="Optional. Enter each team\'s fair-play points for this match (negative). Yellow \u22121, indirect red \u22123, direct red \u22124, yellow+red \u22125. Used only to break ties.">Fair play <em>(optional)</em></span>'
-    +'<label class="fp-in">'+flg(f.h)+'<input type="number" inputmode="numeric" max="0" data-m="'+f.id+'" data-s="fph" value="'+ev(s.fph||'')+'" placeholder="0"></label>'
-    +'<label class="fp-in">'+flg(f.a)+'<input type="number" inputmode="numeric" max="0" data-m="'+f.id+'" data-s="fpa" value="'+ev(s.fpa||'')+'" placeholder="0"></label></div>';
+    +'<div class="mt-fp"><span class="fp-cap" title="Optional, to break ties. Enter each team\'s card penalty points for this match as a positive number; the app applies it as a deduction. Yellow 1, indirect red 3, direct red 4, yellow+red 5.">Fair-play penalty <em>(optional)</em></span>'
+    +'<label class="fp-in">'+flg(f.h)+'<span class="fp-minus">\u2212</span><input type="number" inputmode="numeric" pattern="[0-9]*" min="0" data-m="'+f.id+'" data-s="fph" value="'+(s.fph!==undefined&&s.fph!==''?Math.abs(parseInt(s.fph,10)||0):'')+'" placeholder="0"></label>'
+    +'<label class="fp-in">'+flg(f.a)+'<span class="fp-minus">\u2212</span><input type="number" inputmode="numeric" pattern="[0-9]*" min="0" data-m="'+f.id+'" data-s="fpa" value="'+(s.fpa!==undefined&&s.fpa!==''?Math.abs(parseInt(s.fpa,10)||0):'')+'" placeholder="0"></label></div>';
   return '<div class="'+cls+'" data-mid="'+f.id+'">'+head+body+'</div>';
 }
 function rFx(){
@@ -654,10 +655,12 @@ function bindFx(c){
     if(s2.h!==''&&s2.a!=='')card.classList.add('done');else card.classList.remove('done');
     uProg();
   }));
-  // fair-play inputs (optional) — save only, no re-render needed for the card itself
+  // fair-play inputs (optional) — store as positive penalty magnitude
   c.querySelectorAll('.fp-in input').forEach(inp=>inp.addEventListener('input',e=>{
     const mid=+e.target.dataset.m,side=e.target.dataset.s;
-    if(!S.s[mid])S.s[mid]={h:'',a:''};S.s[mid][side]=e.target.value;sv();
+    let v=e.target.value.replace(/[^0-9]/g,'');  // strip sign/decimals, keep magnitude
+    if(v!==e.target.value)e.target.value=v;
+    if(!S.s[mid])S.s[mid]={h:'',a:''};S.s[mid][side]=v;sv();
   }));
   // collapse a single done card
   c.querySelectorAll('[data-collapse]').forEach(b=>b.addEventListener('click',e=>{
