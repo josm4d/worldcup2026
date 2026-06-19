@@ -16,6 +16,7 @@
   --gold:#f59e0b;--gold-bg:#fef3c7;
   --green:#059669;--green-bg:#d1fae5;
   --blue:#3b82f6;
+  --red:#dc2626;
   --bg:#eef1f6;--card:#fff;
   --g50:#f8fafc;--g100:#f1f5f9;--g200:#e2e8f0;--g300:#cbd5e1;
   --g400:#94a3b8;--g500:#64748b;--g600:#475569;--g700:#334155;--g800:#1e293b;
@@ -118,6 +119,22 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
 .gleg{display:flex;gap:10px;padding:8px 14px;border-top:1px solid var(--g100);font-size:.6rem;color:var(--g400);font-weight:600;flex-wrap:wrap}
 .gleg i{width:8px;height:8px;border-radius:3px;display:inline-block;margin-right:4px}
 .gwarn{padding:3px 14px 9px;font-size:.66rem;color:var(--gold);font-weight:700}
+/* standings controls: search + collapse */
+.stbar{display:flex;gap:7px;align-items:center;margin-bottom:11px}
+.stsearch-w{position:relative;flex:1;min-width:0}
+.stsearch{width:100%;font-family:inherit;font-size:.84rem;padding:9px 30px 9px 32px;border-radius:10px;border:1.5px solid var(--g300);background:var(--card);color:var(--g800);outline:none}
+.stsearch:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,180,216,.12)}
+.stsearch-ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:.8rem;color:var(--g400);pointer-events:none}
+.stsearch-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:none;background:var(--g100);color:var(--g500);width:20px;height:20px;border-radius:50%;font-size:.8rem;line-height:1;cursor:pointer;display:none}
+.stsearch-x.on{display:block}
+.gc-h{cursor:pointer;user-select:none}
+.gc-h h3{display:flex;align-items:center;gap:8px}
+.gc-chev{font-size:.58rem;color:var(--g400);transition:transform .2s;margin-left:auto}
+.gc.collapsed .gc-chev{transform:rotate(-90deg)}
+.gc.collapsed .st,.gc.collapsed .gleg,.gc.collapsed .gwarn{display:none}
+.st tr.hl td{background:rgba(245,158,11,.16)}
+.st tr.hl .nm{font-weight:800;color:var(--navy)}
+.stempty{grid-column:1/-1;text-align:center;padding:30px 14px;color:var(--g400);font-size:.85rem}
 
 /* CARDS */
 .card{background:var(--card);border:1.5px solid var(--g200);border-radius:var(--r);box-shadow:var(--sh);padding:16px;margin-bottom:13px}
@@ -266,6 +283,32 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
 /* next match accent */
 .mt.next{border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,180,216,.16),var(--sh)}
 .nbadge{font-size:.5rem;font-weight:800;color:#fff;background:var(--teal-d);padding:2px 6px;border-radius:8px;letter-spacing:.05em;text-transform:uppercase;flex-shrink:0}
+/* phase pill in header */
+.phase{color:var(--teal);font-weight:800}
+/* clear-this-match button */
+.mt-clear{font-size:.6rem;font-weight:700;color:var(--red);background:rgba(220,38,38,.09);border:none;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:inherit;margin-left:6px;flex-shrink:0}
+.mt-clear:active{background:rgba(220,38,38,.2)}
+/* clickable standings rows */
+.st tbody tr{cursor:pointer}
+.st tbody tr:hover .nm{color:var(--teal-d)}
+
+/* DARK MODE */
+body.dark{
+  --navy:#101735;--navy2:#162048;--navy3:#1d2a63;
+  --bg:#0a0e24;--card:#151b3c;
+  --g50:#1a2145;--g100:#222a52;--g200:#2d3766;--g300:#3b477d;
+  --g400:#7a86b0;--g500:#98a3c8;--g600:#b4bcdd;--g700:#d0d6ee;--g800:#eef1fb;
+  --green-bg:rgba(5,150,105,.18);--gold-bg:rgba(245,158,11,.16);
+  --sh:0 1px 3px rgba(0,0,0,.45);
+}
+body.dark .dhdr,body.dark .mt-r input,body.dark .ks,body.dark .mh-sc,body.dark .st .pt,
+body.dark .gc-h h3,body.dark .dh-txt,body.dark .card h3,body.dark .rules h3,
+body.dark .mtime.u b,body.dark .tzpill b,body.dark .kt,body.dark .dnchip .dn-d,
+body.dark .knchip .kn-r,body.dark .st tr.hl .nm{color:var(--g800)}
+body.dark .mt-r input:focus,body.dark .ks:focus,body.dark .stsearch:focus,
+body.dark .fp-in input:focus,body.dark .kp input:focus{background:var(--g100)}
+body.dark .odds-bar>div{color:#fff}
+body{transition:background-color .2s ease,color .2s ease}
 
 /* TOAST */
 .toast{position:fixed;left:50%;bottom:calc(18px + var(--safe-b));transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;font-size:.78rem;font-weight:700;padding:10px 20px;border-radius:24px;box-shadow:0 8px 24px rgba(12,20,69,.35);transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:200;pointer-events:none}
@@ -298,10 +341,11 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
     <div class="logo">26</div>
     <div class="brand-t">
       <h1>World Cup <b>2026</b></h1>
-      <p><span class="flag">&#x1F1FA;&#x1F1F8;</span> <span class="flag">&#x1F1E8;&#x1F1E6;</span> <span class="flag">&#x1F1F2;&#x1F1FD;</span> &nbsp;Jun 11 &ndash; Jul 19</p>
+      <p><span class="flag">&#x1F1FA;&#x1F1F8;</span> <span class="flag">&#x1F1E8;&#x1F1E6;</span> <span class="flag">&#x1F1F2;&#x1F1FD;</span> &nbsp;<span class="phase" id="phase">Jun 11 &ndash; Jul 19</span></p>
     </div>
   </div>
   <div class="hdr-btns">
+    <button class="ib" id="bTheme" title="Toggle dark mode">&#x1F319;</button>
     <button class="ib" id="bSave" title="Save">&#x1F4BE;</button>
     <button class="ib" id="bExp" title="Export JSON">&#x2B07;&#xFE0F;</button>
     <button class="ib" id="bImp" title="Import JSON">&#x2B06;&#xFE0F;</button>
@@ -332,7 +376,17 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
     <div id="fxBox"></div>
   </section>
 
-  <section class="pnl" id="p-standings"><div id="stBox" class="ggrid"></div></section>
+  <section class="pnl" id="p-standings">
+    <div class="stbar">
+      <div class="stsearch-w">
+        <span class="stsearch-ic">&#x1F50D;</span>
+        <input class="stsearch" id="stSearch" type="text" placeholder="Search team or group&hellip;" autocomplete="off">
+        <button class="stsearch-x" id="stSearchX" title="Clear">&times;</button>
+      </div>
+      <button class="fbtn" id="bStCollapse">Collapse all</button>
+    </div>
+    <div id="stBox" class="ggrid"></div>
+  </section>
 
   <section class="pnl" id="p-third">
     <div class="card"><h3>Best third-placed teams</h3>
@@ -541,16 +595,20 @@ const UAB=tzAbbr(UTZ);
 const SK='wc2026_v4';
 const CK='wc2026_col_v4';
 const DK='wc2026_day_v4';
+const STK='wc2026_stcol_v4';
 let S={s:{},k:{}};
 let COL={};  // match id -> true(collapsed)/false(forced open). default: collapse when filled
 let DCOL={}; // day key -> true(collapsed)/false(open). default: collapse past, fully-filled days
-let _lastToday=null,_lastNext=null,_allCol=false,_lastKoNext=null;
+let STCOL={}; // standings group key -> true(collapsed)
+let _lastToday=null,_lastNext=null,_allCol=false,_lastKoNext=null,_stAllCol=false;
 function ld(){try{const r=localStorage.getItem(SK)||localStorage.getItem('wc2026_v3');if(r){const p=JSON.parse(r);S.s=p.s||{};S.k=p.k||{};}}catch(e){}
   try{const c=localStorage.getItem(CK);if(c)COL=JSON.parse(c)||{};}catch(e){}
-  try{const d=localStorage.getItem(DK);if(d)DCOL=JSON.parse(d)||{};}catch(e){}}
+  try{const d=localStorage.getItem(DK);if(d)DCOL=JSON.parse(d)||{};}catch(e){}
+  try{const t=localStorage.getItem(STK);if(t)STCOL=JSON.parse(t)||{};}catch(e){}}
 function sv(){try{localStorage.setItem(SK,JSON.stringify(S))}catch(e){}}
 function saveCol(){try{localStorage.setItem(CK,JSON.stringify(COL))}catch(e){}}
 function saveDcol(){try{localStorage.setItem(DK,JSON.stringify(DCOL))}catch(e){}}
+function saveStcol(){try{localStorage.setItem(STK,JSON.stringify(STCOL))}catch(e){}}
 
 // TODAY / NEXT-MATCH / SCROLL HELPERS
 function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -567,9 +625,13 @@ function stickyOffset(){let o=0;const tb=document.querySelector('.topbar');if(tb
 function syncStickyTop(){const tb=document.querySelector('.topbar');if(!tb)return;const h=tb.offsetHeight+'px';
   const fb=document.getElementById('fxBar');if(fb)fb.style.top=h;
   const kn=document.getElementById('koNav');if(kn)kn.style.top=h;}
+function centerChip(nav,el){ // scroll only the nav strip horizontally — never the page
+  if(!nav||!el)return;const nr=nav.getBoundingClientRect(),er=el.getBoundingClientRect();
+  const delta=(er.left+er.width/2)-(nr.left+nr.width/2);
+  nav.scrollTo({left:nav.scrollLeft+delta,behavior:'smooth'});}
 function setActiveChip(key){const nav=document.getElementById('dayNav');if(!nav)return;
   nav.querySelectorAll('.dnchip').forEach(ch=>ch.classList.toggle('on',ch.dataset.key===key));
-  const on=nav.querySelector('.dnchip.on');if(on)on.scrollIntoView({inline:'center',block:'nearest'});}
+  centerChip(nav,nav.querySelector('.dnchip.on'));}
 function scrollToDay(key,smooth){const el=document.getElementById('day-'+cssId(key));if(!el)return;
   const fb=document.getElementById('fxBar');if(fb)fb.classList.remove('hide');
   const y=el.getBoundingClientRect().top+window.pageYOffset-stickyOffset();
@@ -601,9 +663,14 @@ function buildDayNav(keys,groups,vm,today){
   nav.querySelectorAll('.dnchip').forEach(b=>b.addEventListener('click',()=>scrollToDay(b.dataset.key,true)));
   updateDayNavActive();}
 function refreshLive(){
-  if(todayStr()!==_lastToday){rFx();}
-  else if(nextMatchId()!==_lastNext){const y=window.pageYOffset;rFx();window.scrollTo({top:y});}
+  // never re-render while the user is typing/selecting — that's what caused the page to jump
+  const ae=document.activeElement;if(ae&&(ae.tagName==='INPUT'||ae.tagName==='SELECT'))return;
+  const y=window.pageYOffset;let did=false;
+  if(todayStr()!==_lastToday){rFx();did=true;}
+  else if(nextMatchId()!==_lastNext){rFx();did=true;}
+  if(did)window.scrollTo({top:y});
   if(document.getElementById('p-knockout').classList.contains('on')&&nextKoId()!==_lastKoNext)rKo();
+  updatePhase();
 }
 function updateCollapseBtn(){const b=document.getElementById('bCollapseAll');if(b)b.textContent=_allCol?'Expand all':'Collapse all';}
 
@@ -618,7 +685,7 @@ function scrollToRound(rnd,smooth){const box=document.getElementById('koBox'),co
   box.scrollTo({left:Math.max(0,left-4),behavior:smooth?'smooth':'auto'});setActiveRound(rnd);}
 function setActiveRound(rnd){const nav=document.getElementById('koNav');if(!nav)return;
   nav.querySelectorAll('.knchip').forEach(c=>c.classList.toggle('on',c.dataset.round===rnd));
-  const on=nav.querySelector('.knchip.on');if(on)on.scrollIntoView({inline:'center',block:'nearest'});}
+  centerChip(nav,nav.querySelector('.knchip.on'));}
 function updateKoNavActive(){const box=document.getElementById('koBox');if(!box)return;
   const bl=box.getBoundingClientRect().left;let cur=KORD[0];
   KORD.forEach(rnd=>{const col=document.getElementById('ko-'+rnd);if(col&&col.getBoundingClientRect().left-bl<=1)cur=rnd;});
@@ -764,7 +831,8 @@ function matchCard(f,isNext){
     +'</div>'
     +oddsHtml(f.h,f.a)
     +'<div class="mt-meta">'+nb+'<span class="gtag g'+f.g+'">'+f.g+'</span><span>'+f.v+'</span>'+timesHtml(f.d,f.et,f.v)
-    +(filled?'<button class="col-toggle" data-collapse="'+f.id+'">collapse \u25B2</button>':'')+'</div>'
+    +(filled?'<button class="col-toggle" data-collapse="'+f.id+'">collapse \u25B2</button>':'')
+    +(filled?'<button class="mt-clear" data-clear="'+f.id+'">clear</button>':'')+'</div>'
     +'<div class="mt-fp"><span class="fp-cap" title="Optional, to break ties. Enter each team\'s card penalty points for this match as a positive number; the app applies it as a deduction. Yellow 1, indirect red 3, direct red 4, yellow+red 5.">Fair-play penalty <em>(optional)</em></span>'
     +'<label class="fp-in">'+flg(f.h)+'<span class="fp-minus">\u2212</span><input type="number" inputmode="numeric" pattern="[0-9]*" min="0" data-m="'+f.id+'" data-s="fph" value="'+(s.fph!==undefined&&s.fph!==''?Math.abs(parseInt(s.fph,10)||0):'')+'" placeholder="0"></label>'
     +'<label class="fp-in">'+flg(f.a)+'<span class="fp-minus">\u2212</span><input type="number" inputmode="numeric" pattern="[0-9]*" min="0" data-m="'+f.id+'" data-s="fpa" value="'+(s.fpa!==undefined&&s.fpa!==''?Math.abs(parseInt(s.fpa,10)||0):'')+'" placeholder="0"></label></div>';
@@ -801,6 +869,7 @@ function rFx(){
   uProg();
 }
 function bindFx(c){
+  let _advT=null;
   c.querySelectorAll('.mt-rows input').forEach(inp=>inp.addEventListener('input',e=>{
     const mid=+e.target.dataset.m,side=e.target.dataset.s;
     if(!S.s[mid])S.s[mid]={h:'',a:''};S.s[mid][side]=e.target.value;sv();
@@ -809,6 +878,15 @@ function bindFx(c){
     const card=e.target.closest('.mt');
     if(s2.h!==''&&s2.a!=='')card.classList.add('done');else card.classList.remove('done');
     uProg();
+    // auto-advance home -> away after a brief pause (still allows 2-digit scores)
+    if(side==='h'&&e.target.value!==''){
+      clearTimeout(_advT);
+      _advT=setTimeout(()=>{
+        if(document.activeElement!==e.target)return; // don't steal focus if user moved on
+        const away=card.querySelector('input[data-s="a"]');
+        if(away&&away.value===''){away.focus();if(away.select)away.select();}
+      },350);
+    }
   }));
   // fair-play inputs (optional) — store as positive penalty magnitude
   c.querySelectorAll('.fp-in input').forEach(inp=>inp.addEventListener('input',e=>{
@@ -820,6 +898,12 @@ function bindFx(c){
   // collapse a single done card
   c.querySelectorAll('[data-collapse]').forEach(b=>b.addEventListener('click',e=>{
     const id=+e.target.dataset.collapse;COL[id]=true;saveCol();rFx();
+  }));
+  // clear a single match's scores + fair-play
+  c.querySelectorAll('[data-clear]').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();const id=+e.target.dataset.clear;
+    delete S.s[id];delete COL[id];sv();saveCol();
+    const y=window.pageYOffset;rFx();window.scrollTo({top:y});uProg();toast('Match cleared');
   }));
   // expand by tapping collapsed header
   c.querySelectorAll('[data-toggle]').forEach(h=>h.addEventListener('click',e=>{
@@ -844,25 +928,42 @@ function uProg(){let n=0;FX.forEach(f=>{if(gs(f.id))n++});
 
 // RENDER: STANDINGS
 function rSt(){
-  const c=document.getElementById('stBox');let html='';
+  const c=document.getElementById('stBox');
+  const si=document.getElementById('stSearch');
+  const q=(si?si.value:'').trim().toLowerCase();
+  const xb=document.getElementById('stSearchX');if(xb)xb.classList.toggle('on',q!=='');
+  let html='',shown=0;
   Object.keys(G).sort().forEach(gk=>{
+    const teams=G[gk];
+    const groupMatch=q!==''&&(gk.toLowerCase()===q||('group '+gk.toLowerCase())===q);
+    const teamMatch=q!==''&&teams.some(t=>t.toLowerCase().includes(q));
+    if(q!==''&&!groupMatch&&!teamMatch)return;
+    shown++;
     const r=compGroup(gk);
     const cls=r.played===r.total?'c':(r.played>0?'p':'n');
     const txt=r.played===r.total?'Done':(r.played>0?r.played+'/'+r.total:'\u2014');
+    const collapsed=(q===''&&STCOL[gk]===true); // search always expands matches
     let tied=false;
-    html+='<div class="gc"><div class="gc-h"><h3><span class="gd g'+gk+'"></span>Group '+gk+'</h3><span class="gst '+cls+'">'+txt+'</span></div>'
+    html+='<div class="gc'+(collapsed?' collapsed':'')+'"><div class="gc-h" data-stgrp="'+gk+'"><h3><span class="gd g'+gk+'"></span>Group '+gk+'<span class="gc-chev">\u25BC</span></h3><span class="gst '+cls+'">'+txt+'</span></div>'
       +'<table class="st"><thead><tr><th class="tl">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead><tbody>';
     r.standings.forEach((s,i)=>{
       if(s.tied)tied=true;
-      html+='<tr class="r'+(i+1)+'"><td class="tc"><div class="ti">'+flg(s.team)+'<span class="nm">'+s.team+'</span>'+rkBadge(s.team)+'</div></td>'
+      const hl=teamMatch&&!groupMatch&&s.team.toLowerCase().includes(q);
+      html+='<tr class="r'+(i+1)+(hl?' hl':'')+'" data-teamgrp="'+gk+'" title="View Group '+gk+' fixtures"><td class="tc"><div class="ti">'+flg(s.team)+'<span class="nm">'+s.team+'</span>'+rkBadge(s.team)+'</div></td>'
         +'<td>'+s.P+'</td><td>'+s.W+'</td><td>'+s.D+'</td><td>'+s.L+'</td><td>'+s.GF+'</td><td>'+s.GA+'</td><td>'+fgd(s.GD)+'</td><td class="pt">'+s.Pts+'</td></tr>';
     });
     html+='</tbody></table>';
     if(tied)html+='<div class="gwarn">\u26A0 Still level after fair play \u2014 FIFA ranking is the final decider (enter fair-play points on each match to apply criterion 6)</div>';
     html+='<div class="gleg"><span><i style="background:var(--green)"></i>Winner</span><span><i style="background:var(--blue)"></i>Runner-up</span><span><i style="background:var(--gold)"></i>3rd (may advance)</span></div></div>';
   });
+  if(shown===0)html='<div class="stempty">No team or group matches \u201C'+ev(q)+'\u201D.</div>';
   c.innerHTML=html;
+  c.querySelectorAll('[data-stgrp]').forEach(h=>h.addEventListener('click',()=>{
+    const gk=h.dataset.stgrp;STCOL[gk]=!(STCOL[gk]===true);saveStcol();rSt();
+  }));
+  c.querySelectorAll('[data-teamgrp]').forEach(r=>r.addEventListener('click',()=>showGroupFixtures(r.dataset.teamgrp)));
 }
+function updateStCollapseBtn(){const b=document.getElementById('bStCollapse');if(b)b.textContent=_stAllCol?'Expand all':'Collapse all';}
 
 // RENDER: THIRD
 function rTp(){
@@ -936,6 +1037,7 @@ function rKo(){
   buildKoNav(today,nextId);
   syncStickyTop();
   c.scrollLeft=sl;
+  updatePhase();
 }
 function rBmap(){
   const tb=document.querySelector('#bmT tbody');let h='';
@@ -952,26 +1054,62 @@ function ev(v){return v==null?'':String(v).replace(/"/g,'&quot;');}
 // TABS
 const TABS=[['fixtures','Fixtures'],['standings','Standings'],['third','3rd Place'],['knockout','Knockout'],['rules','Rules']];
 const strip=document.getElementById('tstrip');
-TABS.forEach((t,i)=>{
-  const b=document.createElement('button');b.className='tab'+(i===0?' on':'');b.textContent=t[1];
+function selectTab(key){
+  strip.querySelectorAll('.tab').forEach((x,i)=>x.classList.toggle('on',TABS[i][0]===key));
+  document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
+  document.getElementById('p-'+key).classList.add('on');
+  if(key==='standings')rSt();if(key==='third')rTp();if(key==='knockout')rKo();
+}
+TABS.forEach(t=>{
+  const b=document.createElement('button');b.className='tab'+(t[0]==='fixtures'?' on':'');b.textContent=t[1];
   b.addEventListener('click',()=>{
-    strip.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
-    document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
-    b.classList.add('on');document.getElementById('p-'+t[0]).classList.add('on');
-    if(t[0]==='standings')rSt();if(t[0]==='third')rTp();if(t[0]==='knockout')rKo();
+    selectTab(t[0]);
     if(t[0]==='fixtures'){jumpToToday(true);}
     else if(t[0]==='knockout'){window.scrollTo({top:0,behavior:'smooth'});jumpToKoRound(true);}
     else{window.scrollTo({top:0,behavior:'smooth'});}
   });
   strip.appendChild(b);
 });
+// jump from a standings team row to that group's fixtures
+function showGroupFixtures(gk){
+  document.getElementById('vMode').value='group';
+  document.getElementById('fGrp').value=gk;
+  selectTab('fixtures');rFx();
+  requestAnimationFrame(()=>scrollToDay('Group '+gk,true));
+  toast('Group '+gk+' fixtures');
+}
+// header phase pill
+function phaseLabel(){
+  const champ=koWin(104);if(champ&&!isPh(champ))return '\u{1F3C6} '+champ;
+  const t=todayStr();
+  if(t<'2026-06-11')return 'Kicks off Jun 11';
+  if(t<='2026-06-17')return 'Group Stage · MD1';
+  if(t<='2026-06-23')return 'Group Stage · MD2';
+  if(t<='2026-06-27')return 'Group Stage · MD3';
+  if(t<='2026-07-03')return 'Round of 32';
+  if(t<='2026-07-08')return 'Round of 16';
+  if(t<='2026-07-12')return 'Quarter-finals';
+  if(t<='2026-07-16')return 'Semi-finals';
+  if(t<='2026-07-18')return 'Third-place play-off';
+  if(t==='2026-07-19')return 'Final — today';
+  return 'Champions crowned';
+}
+function updatePhase(){const e=document.getElementById('phase');if(e)e.textContent=phaseLabel();}
+// theme
+function applyTheme(dark){
+  document.body.classList.toggle('dark',dark);
+  const b=document.getElementById('bTheme');if(b)b.innerHTML=dark?'☀️':'\u{1F319}';
+  const mt=document.querySelector('meta[name="theme-color"]');if(mt)mt.setAttribute('content',dark?'#0a0e24':'#0c1445');
+  try{localStorage.setItem('wc2026_theme',dark?'dark':'light');}catch(e){}
+}
 
 // CONTROLS
+document.getElementById('bTheme').onclick=()=>applyTheme(!document.body.classList.contains('dark'));
 document.getElementById('bSave').onclick=()=>{sv();toast('Saved \u2713');};
-document.getElementById('bRst').onclick=()=>{if(confirm('Reset ALL scores? This cannot be undone.')){S={s:{},k:{}};sv();rFx();rSt();rTp();rKo();toast('All scores cleared');}};
+document.getElementById('bRst').onclick=()=>{if(confirm('Reset ALL scores? This cannot be undone.')){S={s:{},k:{}};sv();rFx();rSt();rTp();rKo();updatePhase();toast('All scores cleared');}};
 document.getElementById('bExp').onclick=()=>{const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='wc2026-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(u);toast('Exported');};
 document.getElementById('bImp').onclick=()=>document.getElementById('fileImp').click();
-document.getElementById('fileImp').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev2=>{try{const p=JSON.parse(ev2.target.result);if(p){S.s=p.s||p.scores||{};S.k=p.k||p.koScores||{};sv();rFx();rSt();rTp();rKo();toast('Imported \u2713');}}catch(err){toast('Invalid file');}};r.readAsText(f);e.target.value='';};
+document.getElementById('fileImp').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev2=>{try{const p=JSON.parse(ev2.target.result);if(p){S.s=p.s||p.scores||{};S.k=p.k||p.koScores||{};sv();rFx();rSt();rTp();rKo();updatePhase();toast('Imported \u2713');}}catch(err){toast('Invalid file');}};r.readAsText(f);e.target.value='';};
 document.getElementById('vMode').onchange=()=>{rFx();jumpToToday(false);};
 document.getElementById('fGrp').onchange=rFx;
 document.getElementById('bToday').onclick=()=>jumpToToday(true);
@@ -991,6 +1129,8 @@ document.getElementById('bCollapseAll').onclick=()=>{
 // headroom: hide the control bar on scroll-down, reveal on scroll-up. plus nav scroll-spy.
 let _lastY=window.pageYOffset||0,_spy=false;
 window.addEventListener('scroll',()=>{
+  // ignore scroll events fired while an input is focused (mobile keyboard opening, etc.)
+  const ae=document.activeElement;if(ae&&ae.tagName==='INPUT')return;
   const y=window.pageYOffset||0;
   const onFx=document.getElementById('p-fixtures').classList.contains('on');
   const onKo=document.getElementById('p-knockout').classList.contains('on');
@@ -1007,11 +1147,21 @@ window.addEventListener('scroll',()=>{
 },{passive:true});
 window.addEventListener('resize',syncStickyTop);
 document.getElementById('koBox').addEventListener('scroll',()=>{if(_spy)return;_spy=true;requestAnimationFrame(()=>{_spy=false;updateKoNavActive();});},{passive:true});
+// standings search + collapse
+document.getElementById('stSearch').addEventListener('input',rSt);
+document.getElementById('stSearchX').onclick=()=>{const si=document.getElementById('stSearch');si.value='';rSt();si.focus();};
+document.getElementById('bStCollapse').onclick=()=>{
+  _stAllCol=!_stAllCol;Object.keys(G).forEach(gk=>{STCOL[gk]=_stAllCol;});
+  saveStcol();updateStCollapseBtn();rSt();
+};
 const sel=document.getElementById('fGrp');Object.keys(G).forEach(g=>{const o=document.createElement('option');o.value=g;o.textContent='Group '+g;sel.appendChild(o);});
 document.getElementById('tzPill').innerHTML='\u{1F550} <b>'+UTZ.split('/').pop().replace(/_/g,' ')+'</b> ('+UAB+')';
 
 // INIT
-ld();rFx();rSt();rBmap();updateCollapseBtn();syncStickyTop();
+ld();
+let _theme='light';try{_theme=localStorage.getItem('wc2026_theme')||'light';}catch(e){}
+applyTheme(_theme==='dark');
+rFx();rSt();rBmap();updateCollapseBtn();updateStCollapseBtn();updatePhase();syncStickyTop();
 requestAnimationFrame(()=>requestAnimationFrame(()=>{syncStickyTop();jumpToToday(false);}));
 setInterval(refreshLive,60000);
 </script>
