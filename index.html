@@ -33,9 +33,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 .hdr-in{max-width:1280px;margin:0 auto;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
 .logo{width:42px;height:42px;flex-shrink:0;background:linear-gradient(135deg,var(--gold),#fbbf24);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;color:var(--navy);box-shadow:0 3px 12px rgba(245,158,11,.35)}
-.brand-t h1{font-size:1.02rem;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.25;white-space:nowrap}
+.brand-t{min-width:0;overflow:hidden}
+.brand-t h1{font-size:1.02rem;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand-t h1 b{color:var(--teal);font-weight:800}
-.brand-t p{font-size:.66rem;color:rgba(255,255,255,.5);white-space:nowrap}
+.brand-t p{font-size:.66rem;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hdr-btns{display:flex;gap:5px;flex-shrink:0}
 .ib{height:38px;min-width:38px;padding:0 9px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:rgba(255,255,255,.8);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
 .ib:active{background:rgba(255,255,255,.2)}
@@ -313,6 +314,21 @@ body{transition:background-color .2s ease,color .2s ease}
 /* TOAST */
 .toast{position:fixed;left:50%;bottom:calc(18px + var(--safe-b));transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;font-size:.78rem;font-weight:700;padding:10px 20px;border-radius:24px;box-shadow:0 8px 24px rgba(12,20,69,.35);transition:transform .3s cubic-bezier(.34,1.56,.64,1);z-index:200;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
+
+/* MOBILE: compact header so 5 buttons + title don't collide */
+@media(max-width:520px){
+  .hdr-in{padding:9px 10px;gap:7px}
+  .brand{gap:8px}
+  .logo{width:36px;height:36px;font-size:16px;border-radius:10px}
+  .brand-t h1{font-size:.9rem}
+  .brand-t p{font-size:.6rem}
+  .hdr-btns{gap:3px}
+  .ib{height:34px;min-width:32px;padding:0 5px;font-size:.85rem}
+}
+@media(max-width:360px){
+  .brand-t p{display:none}
+  .ib{min-width:29px;font-size:.8rem}
+}
 
 /* DESKTOP: side-by-side fixture layout */
 @media(min-width:760px){
