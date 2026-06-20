@@ -40,6 +40,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica N
 .hdr-btns{display:flex;gap:5px;flex-shrink:0}
 .ib{height:38px;min-width:38px;padding:0 9px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:rgba(255,255,255,.8);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit}
 .ib:active{background:rgba(255,255,255,.2)}
+.hdr-phase{max-width:1280px;margin:0 auto;padding:0 14px 9px;display:flex;align-items:center;gap:6px;font-size:.66rem;color:rgba(255,255,255,.5);font-weight:600;min-width:0}
+.hdr-phase .phase{color:var(--teal);font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #fileImp{display:none}
 
 /* TABS */
@@ -292,6 +294,12 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
 /* clickable standings rows */
 .st tbody tr{cursor:pointer}
 .st tbody tr:hover .nm{color:var(--teal-d)}
+/* fixtures team-filter banner */
+.fxfilter{display:flex;align-items:center;gap:8px;background:var(--teal);color:#fff;border-radius:10px;padding:7px 12px;margin-bottom:8px;font-size:.76rem;font-weight:700}
+.fxfilter .ff-lbl{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fxfilter .flag{font-size:1.1em}
+.fxfilter .ff-clear{margin-left:auto;flex-shrink:0;background:rgba(255,255,255,.22);border:none;color:#fff;font-family:inherit;font-weight:700;font-size:.7rem;padding:5px 11px;border-radius:7px;cursor:pointer}
+.fxfilter .ff-clear:active{background:rgba(255,255,255,.4)}
 
 /* DARK MODE */
 body.dark{
@@ -324,9 +332,9 @@ body{transition:background-color .2s ease,color .2s ease}
   .brand-t p{font-size:.6rem}
   .hdr-btns{gap:3px}
   .ib{height:34px;min-width:32px;padding:0 5px;font-size:.85rem}
+  .hdr-phase{padding:0 10px 8px;font-size:.62rem}
 }
 @media(max-width:360px){
-  .brand-t p{display:none}
   .ib{min-width:29px;font-size:.8rem}
 }
 
@@ -352,23 +360,26 @@ body{transition:background-color .2s ease,color .2s ease}
 <body>
 
 <div class="topbar">
-<div class="hdr"><div class="hdr-in">
-  <div class="brand">
-    <div class="logo">26</div>
-    <div class="brand-t">
-      <h1>World Cup <b>2026</b></h1>
-      <p><span class="flag">&#x1F1FA;&#x1F1F8;</span> <span class="flag">&#x1F1E8;&#x1F1E6;</span> <span class="flag">&#x1F1F2;&#x1F1FD;</span> &nbsp;<span class="phase" id="phase">Jun 11 &ndash; Jul 19</span></p>
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="brand">
+      <div class="logo">26</div>
+      <div class="brand-t"><h1>World Cup <b>2026</b></h1></div>
+    </div>
+    <div class="hdr-btns">
+      <button class="ib" id="bTheme" title="Toggle dark mode">&#x1F319;</button>
+      <button class="ib" id="bSave" title="Save">&#x1F4BE;</button>
+      <button class="ib" id="bExp" title="Export JSON">&#x2B07;&#xFE0F;</button>
+      <button class="ib" id="bImp" title="Import JSON">&#x2B06;&#xFE0F;</button>
+      <button class="ib" id="bRst" title="Reset all">&#x1F5D1;&#xFE0F;</button>
+      <input type="file" id="fileImp" accept=".json">
     </div>
   </div>
-  <div class="hdr-btns">
-    <button class="ib" id="bTheme" title="Toggle dark mode">&#x1F319;</button>
-    <button class="ib" id="bSave" title="Save">&#x1F4BE;</button>
-    <button class="ib" id="bExp" title="Export JSON">&#x2B07;&#xFE0F;</button>
-    <button class="ib" id="bImp" title="Import JSON">&#x2B06;&#xFE0F;</button>
-    <button class="ib" id="bRst" title="Reset all">&#x1F5D1;&#xFE0F;</button>
-    <input type="file" id="fileImp" accept=".json">
+  <div class="hdr-phase">
+    <span class="flag">&#x1F1FA;&#x1F1F8;</span> <span class="flag">&#x1F1E8;&#x1F1E6;</span> <span class="flag">&#x1F1F2;&#x1F1FD;</span>
+    <span class="phase" id="phase">Jun 11 &ndash; Jul 19</span>
   </div>
-</div></div>
+</div>
 
 <div class="tabs-w"><nav class="tabs" id="tstrip"></nav></div>
 </div><!-- /topbar -->
@@ -387,6 +398,7 @@ body{transition:background-color .2s ease,color .2s ease}
         <span class="ptxt" id="pt">0/72</span>
       </div>
     </div>
+    <div class="fxfilter" id="fxFilter" style="display:none"></div>
     <div class="daynav" id="dayNav"></div>
     </div><!-- /fxBar -->
     <div id="fxBox"></div>
@@ -513,7 +525,7 @@ const FX=[
 {id:28,d:'2026-06-18',g:'A',h:'Mexico',a:'South Korea',v:'Guadalajara',et:'21:00'},
 {id:29,d:'2026-06-19',g:'D',h:'United States',a:'Australia',v:'Seattle',et:'15:00'},
 {id:30,d:'2026-06-19',g:'C',h:'Scotland',a:'Morocco',v:'Boston',et:'18:00'},
-{id:31,d:'2026-06-19',g:'C',h:'Brazil',a:'Haiti',v:'Philadelphia',et:'21:00'},
+{id:31,d:'2026-06-19',g:'C',h:'Brazil',a:'Haiti',v:'Philadelphia',et:'20:30'},
 {id:32,d:'2026-06-19',g:'D',h:'T\u00fcrkiye',a:'Paraguay',v:'San Francisco',et:'00:00'},
 {id:33,d:'2026-06-20',g:'F',h:'Netherlands',a:'Sweden',v:'Houston',et:'13:00'},
 {id:34,d:'2026-06-20',g:'E',h:'Germany',a:'Ivory Coast',v:'Toronto',et:'16:00'},
@@ -617,6 +629,7 @@ let COL={};  // match id -> true(collapsed)/false(forced open). default: collaps
 let DCOL={}; // day key -> true(collapsed)/false(open). default: collapse past, fully-filled days
 let STCOL={}; // standings group key -> true(collapsed)
 let _lastToday=null,_lastNext=null,_allCol=false,_lastKoNext=null,_stAllCol=false;
+let teamFilter=null; // when set, fixtures show only this team's matches
 function ld(){try{const r=localStorage.getItem(SK)||localStorage.getItem('wc2026_v3');if(r){const p=JSON.parse(r);S.s=p.s||{};S.k=p.k||{};}}catch(e){}
   try{const c=localStorage.getItem(CK);if(c)COL=JSON.parse(c)||{};}catch(e){}
   try{const d=localStorage.getItem(DK);if(d)DCOL=JSON.parse(d)||{};}catch(e){}
@@ -653,11 +666,10 @@ function scrollToDay(key,smooth){const el=document.getElementById('day-'+cssId(k
   const y=el.getBoundingClientRect().top+window.pageYOffset-stickyOffset();
   window.scrollTo({top:Math.max(0,y),behavior:smooth?'smooth':'auto'});setActiveChip(key);}
 function jumpToToday(smooth){
-  const vm=document.getElementById('vMode').value;
+  const vm=teamFilter?'date':document.getElementById('vMode').value;
   if(vm!=='date'){window.scrollTo({top:0,behavior:smooth?'smooth':'auto'});return;}
-  const fg=document.getElementById('fGrp').value,today=todayStr();
-  const list=fg==='all'?FX:FX.filter(f=>f.g===fg);
-  const days=[...new Set(list.map(f=>f.d))].sort();if(!days.length)return;
+  const today=todayStr();
+  const days=[...new Set(visibleFixtures().map(f=>f.d))].sort();if(!days.length)return;
   let target=days.find(d=>d>=today)||days[days.length-1]; // today, else next upcoming, else last
   scrollToDay(target,smooth);}
 function updateDayNavActive(){const nav=document.getElementById('dayNav');if(!nav||nav.style.display==='none')return;
@@ -854,9 +866,22 @@ function matchCard(f,isNext){
     +'<label class="fp-in">'+flg(f.a)+'<span class="fp-minus">\u2212</span><input type="number" inputmode="numeric" pattern="[0-9]*" min="0" data-m="'+f.id+'" data-s="fpa" value="'+(s.fpa!==undefined&&s.fpa!==''?Math.abs(parseInt(s.fpa,10)||0):'')+'" placeholder="0"></label></div>';
   return '<div class="'+cls+'" data-mid="'+f.id+'">'+head+body+'</div>';
 }
+function visibleFixtures(){
+  if(teamFilter)return FX.filter(f=>f.h===teamFilter||f.a===teamFilter);
+  const fg=document.getElementById('fGrp').value;
+  return fg==='all'?FX:FX.filter(f=>f.g===fg);
+}
 function rFx(){
-  const c=document.getElementById('fxBox'),vm=document.getElementById('vMode').value,fg=document.getElementById('fGrp').value;
-  const list=fg==='all'?FX:FX.filter(f=>f.g===fg);
+  const c=document.getElementById('fxBox');
+  const vm=teamFilter?'date':document.getElementById('vMode').value; // team filter always shows dates
+  const list=visibleFixtures();
+  // filter banner (in the sticky bar)
+  const ff=document.getElementById('fxFilter');
+  if(ff){
+    if(teamFilter){ff.style.display='flex';ff.innerHTML='<span class="ff-lbl">'+flg(teamFilter)+' <b>'+teamFilter+'</b> · '+list.length+' matches</span><button class="ff-clear" id="ffClear">Clear filter ✕</button>';
+      const fc=document.getElementById('ffClear');if(fc)fc.onclick=clearFixtureFilter;}
+    else{ff.style.display='none';ff.innerHTML='';}
+  }
   const today=todayStr(),nextId=nextMatchId();
   _lastToday=today;_lastNext=nextId;
   const groups={};
@@ -886,23 +911,24 @@ function rFx(){
 }
 function bindFx(c){
   let _advT=null;
+  // chain focus through the match's fields: home -> away -> fair-play home -> fair-play away, then stop
+  function scheduleAdvance(card,el){
+    clearTimeout(_advT);
+    _advT=setTimeout(()=>{
+      if(document.activeElement!==el)return; // don't steal focus if the user moved on
+      const ins=[...card.querySelectorAll('input[data-s]')]; // DOM order: h, a, fph, fpa
+      const i=ins.indexOf(el);
+      if(i>=0&&i<ins.length-1){const nx=ins[i+1];if(nx.value===''){nx.focus();if(nx.select)nx.select();}}
+    },350);
+  }
   c.querySelectorAll('.mt-rows input').forEach(inp=>inp.addEventListener('input',e=>{
     const mid=+e.target.dataset.m,side=e.target.dataset.s;
     if(!S.s[mid])S.s[mid]={h:'',a:''};S.s[mid][side]=e.target.value;sv();
     const s2=S.s[mid];
-    // live-update odds key text not needed; refresh done state + win highlight inline
     const card=e.target.closest('.mt');
     if(s2.h!==''&&s2.a!=='')card.classList.add('done');else card.classList.remove('done');
     uProg();
-    // auto-advance home -> away after a brief pause (still allows 2-digit scores)
-    if(side==='h'&&e.target.value!==''){
-      clearTimeout(_advT);
-      _advT=setTimeout(()=>{
-        if(document.activeElement!==e.target)return; // don't steal focus if user moved on
-        const away=card.querySelector('input[data-s="a"]');
-        if(away&&away.value===''){away.focus();if(away.select)away.select();}
-      },350);
-    }
+    if(e.target.value!=='')scheduleAdvance(card,e.target); // still allows 2-digit scores
   }));
   // fair-play inputs (optional) — store as positive penalty magnitude
   c.querySelectorAll('.fp-in input').forEach(inp=>inp.addEventListener('input',e=>{
@@ -910,6 +936,7 @@ function bindFx(c){
     let v=e.target.value.replace(/[^0-9]/g,'');  // strip sign/decimals, keep magnitude
     if(v!==e.target.value)e.target.value=v;
     if(!S.s[mid])S.s[mid]={h:'',a:''};S.s[mid][side]=v;sv();
+    if(v!=='')scheduleAdvance(e.target.closest('.mt'),e.target); // fph -> fpa, stop at last
   }));
   // collapse a single done card
   c.querySelectorAll('[data-collapse]').forEach(b=>b.addEventListener('click',e=>{
@@ -965,7 +992,7 @@ function rSt(){
     r.standings.forEach((s,i)=>{
       if(s.tied)tied=true;
       const hl=teamMatch&&!groupMatch&&s.team.toLowerCase().includes(q);
-      html+='<tr class="r'+(i+1)+(hl?' hl':'')+'" data-teamgrp="'+gk+'" title="View Group '+gk+' fixtures"><td class="tc"><div class="ti">'+flg(s.team)+'<span class="nm">'+s.team+'</span>'+rkBadge(s.team)+'</div></td>'
+      html+='<tr class="r'+(i+1)+(hl?' hl':'')+'" data-team="'+ev(s.team)+'" title="View '+ev(s.team)+' fixtures"><td class="tc"><div class="ti">'+flg(s.team)+'<span class="nm">'+s.team+'</span>'+rkBadge(s.team)+'</div></td>'
         +'<td>'+s.P+'</td><td>'+s.W+'</td><td>'+s.D+'</td><td>'+s.L+'</td><td>'+s.GF+'</td><td>'+s.GA+'</td><td>'+fgd(s.GD)+'</td><td class="pt">'+s.Pts+'</td></tr>';
     });
     html+='</tbody></table>';
@@ -977,7 +1004,7 @@ function rSt(){
   c.querySelectorAll('[data-stgrp]').forEach(h=>h.addEventListener('click',()=>{
     const gk=h.dataset.stgrp;STCOL[gk]=!(STCOL[gk]===true);saveStcol();rSt();
   }));
-  c.querySelectorAll('[data-teamgrp]').forEach(r=>r.addEventListener('click',()=>showGroupFixtures(r.dataset.teamgrp)));
+  c.querySelectorAll('[data-team]').forEach(r=>r.addEventListener('click',()=>showTeamFixtures(r.dataset.team)));
 }
 function updateStCollapseBtn(){const b=document.getElementById('bStCollapse');if(b)b.textContent=_stAllCol?'Expand all':'Collapse all';}
 
@@ -1086,13 +1113,21 @@ TABS.forEach(t=>{
   });
   strip.appendChild(b);
 });
-// jump from a standings team row to that group's fixtures
-function showGroupFixtures(gk){
-  document.getElementById('vMode').value='group';
-  document.getElementById('fGrp').value=gk;
+// jump from a standings team row to that team's fixtures (date view, dates visible)
+function showTeamFixtures(team){
+  teamFilter=team;
+  document.getElementById('vMode').value='date';
+  document.getElementById('fGrp').value='all';
   selectTab('fixtures');rFx();
-  requestAnimationFrame(()=>scrollToDay('Group '+gk,true));
-  toast('Group '+gk+' fixtures');
+  requestAnimationFrame(()=>jumpToToday(true));
+  toast(team+' fixtures');
+}
+function clearFixtureFilter(){
+  teamFilter=null;
+  document.getElementById('vMode').value='date';
+  document.getElementById('fGrp').value='all';
+  rFx();requestAnimationFrame(()=>jumpToToday(true));
+  toast('Filter cleared');
 }
 // header phase pill
 function phaseLabel(){
@@ -1126,8 +1161,8 @@ document.getElementById('bRst').onclick=()=>{if(confirm('Reset ALL scores? This 
 document.getElementById('bExp').onclick=()=>{const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='wc2026-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(u);toast('Exported');};
 document.getElementById('bImp').onclick=()=>document.getElementById('fileImp').click();
 document.getElementById('fileImp').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev2=>{try{const p=JSON.parse(ev2.target.result);if(p){S.s=p.s||p.scores||{};S.k=p.k||p.koScores||{};sv();rFx();rSt();rTp();rKo();updatePhase();toast('Imported \u2713');}}catch(err){toast('Invalid file');}};r.readAsText(f);e.target.value='';};
-document.getElementById('vMode').onchange=()=>{rFx();jumpToToday(false);};
-document.getElementById('fGrp').onchange=rFx;
+document.getElementById('vMode').onchange=()=>{teamFilter=null;rFx();jumpToToday(false);};
+document.getElementById('fGrp').onchange=()=>{teamFilter=null;rFx();jumpToToday(false);};
 document.getElementById('bToday').onclick=()=>jumpToToday(true);
 document.getElementById('bCollapseAll').onclick=()=>{
   const vm=document.getElementById('vMode').value,fg=document.getElementById('fGrp').value;
