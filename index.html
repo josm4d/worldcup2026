@@ -300,6 +300,45 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
 .fxfilter .flag{font-size:1.1em}
 .fxfilter .ff-clear{margin-left:auto;flex-shrink:0;background:rgba(255,255,255,.22);border:none;color:#fff;font-family:inherit;font-weight:700;font-size:.7rem;padding:5px 11px;border-radius:7px;cursor:pointer}
 .fxfilter .ff-clear:active{background:rgba(255,255,255,.4)}
+/* SCENARIOS TAB */
+.scn-intro{font-size:.76rem;color:var(--g500);margin-bottom:6px;padding:11px 13px;background:var(--card);border:1px solid var(--g200);border-radius:var(--rs);line-height:1.55}
+.scn-intro b{color:var(--g700)}
+.scn-h{font-size:.9rem;font-weight:800;color:var(--navy);margin:18px 0 9px;display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.scn-h .sub{font-weight:600;color:var(--g400);font-size:.7rem}
+.scn-chev{font-size:.6rem;color:var(--g400);transition:transform .2s}
+.scn-h.col .scn-chev{transform:rotate(-90deg)}
+#scnGroups.scn-hide,#scnBracket.scn-hide{display:none}
+.scn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:12px}
+.scn-gc{background:var(--card);border:1.5px solid var(--g200);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.scn-gh{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border-bottom:1px solid var(--g100)}
+.scn-gh h4{font-size:.92rem;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:7px}
+.scn-gh .gd{width:10px;height:10px;border-radius:3px}
+.scn-gh .pl{font-size:.58rem;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.04em}
+.scn-row{display:flex;align-items:center;gap:8px;padding:8px 13px 3px;font-size:.84rem}
+.scn-row .flag{font-size:1.15em}
+.scn-row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.scn-row .pts{font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;min-width:14px;text-align:right}
+.scn-st{font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.03em;padding:2px 7px;border-radius:9px;white-space:nowrap}
+.scn-st.win{background:var(--green-bg);color:var(--green)}
+.scn-st.thru{background:rgba(16,185,129,.16);color:var(--green)}
+.scn-st.alive{background:var(--gold-bg);color:var(--gold)}
+.scn-st.third{background:rgba(245,158,11,.16);color:var(--gold)}
+.scn-st.out{background:var(--g100);color:var(--g400)}
+.scn-st.prov{background:var(--g100);color:var(--g500)}
+.scn-need{padding:0 13px 7px 35px;font-size:.66rem;color:var(--g500);line-height:1.4}
+.scn-note{font-size:.66rem;color:var(--g400);padding:8px 13px;border-top:1px solid var(--g50)}
+.scn-br{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:10px}
+.scn-m{background:var(--card);border:1.5px solid var(--g200);border-radius:var(--rs);padding:9px 11px;box-shadow:var(--sh)}
+.scn-m .mh{font-size:.55rem;font-weight:700;color:var(--g400);text-transform:uppercase;letter-spacing:.03em;margin-bottom:5px}
+.scn-side{display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:700;color:var(--g800);padding:1px 0}
+.scn-side .flag{font-size:1.1em}
+.scn-side .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scn-alt{font-size:.6rem;color:var(--g400);margin:2px 0 2px 22px;line-height:1.4}
+.scn-vs{font-size:.54rem;color:var(--g300);font-weight:800;margin:2px 0}
+/* iOS focus-zoom guard: text inputs must be >=16px or Safari zooms the page on focus */
+.fp-in input{font-size:16px;width:40px;height:30px}
+.kp input{font-size:16px;width:44px;height:32px}
+.stsearch{font-size:16px}
 
 /* DARK MODE */
 body.dark{
@@ -313,7 +352,8 @@ body.dark{
 body.dark .dhdr,body.dark .mt-r input,body.dark .ks,body.dark .mh-sc,body.dark .st .pt,
 body.dark .gc-h h3,body.dark .dh-txt,body.dark .card h3,body.dark .rules h3,
 body.dark .mtime.u b,body.dark .tzpill b,body.dark .kt,body.dark .dnchip .dn-d,
-body.dark .knchip .kn-r,body.dark .st tr.hl .nm{color:var(--g800)}
+body.dark .knchip .kn-r,body.dark .st tr.hl .nm,
+body.dark .scn-h,body.dark .scn-gh h4,body.dark .scn-row .pts,body.dark .scn-side{color:var(--g800)}
 body.dark .mt-r input:focus,body.dark .ks:focus,body.dark .stsearch:focus,
 body.dark .fp-in input:focus,body.dark .kp input:focus{background:var(--g100)}
 body.dark .odds-bar>div{color:#fff}
@@ -420,6 +460,14 @@ body{transition:background-color .2s ease,color .2s ease}
     <div class="card"><h3>Best third-placed teams</h3>
     <p class="sub">Top 8 advance to the Round of 32. Ranked by points, goal difference, then goals scored. Fair-play and FIFA ranking break remaining ties (not tracked).</p>
     <div id="tpBox"></div></div>
+  </section>
+
+  <section class="pnl" id="p-scenarios">
+    <div class="scn-intro">Once a group has played two games, this shows where each team stands &mdash; <b>through</b>, <b>alive</b>, or <b>out</b> &mdash; and what they need on Matchday&nbsp;3. Below is a <b>projected Round of 32</b> assuming the current standings hold, with the other teams that could still take each slot. Third-place slots use an approximate allocation, so treat the bracket as indicative.</div>
+    <h3 class="scn-h" data-scncol="groups"><span class="scn-chev">&#x25BC;</span>Group qualification</h3>
+    <div class="scn-grid" id="scnGroups"></div>
+    <h3 class="scn-h" data-scncol="bracket"><span class="scn-chev">&#x25BC;</span>Projected Round of 32 <span class="sub">&middot; if standings hold</span></h3>
+    <div class="scn-br" id="scnBracket"></div>
   </section>
 
   <section class="pnl" id="p-knockout">
@@ -624,16 +672,19 @@ const SK='wc2026_v4';
 const CK='wc2026_col_v4';
 const DK='wc2026_day_v4';
 const STK='wc2026_stcol_v4';
+const SNK='wc2026_scncol_v4';
 let S={s:{},k:{}};
 let COL={};  // match id -> true(collapsed)/false(forced open). default: collapse when filled
 let DCOL={}; // day key -> true(collapsed)/false(open). default: collapse past, fully-filled days
 let STCOL={}; // standings group key -> true(collapsed)
+let SCNCOL={}; // scenarios section ('groups'/'bracket') -> true(collapsed)
 let _lastToday=null,_lastNext=null,_allCol=false,_lastKoNext=null,_stAllCol=false;
 let teamFilter=null; // when set, fixtures show only this team's matches
 function ld(){try{const r=localStorage.getItem(SK)||localStorage.getItem('wc2026_v3');if(r){const p=JSON.parse(r);S.s=p.s||{};S.k=p.k||{};}}catch(e){}
   try{const c=localStorage.getItem(CK);if(c)COL=JSON.parse(c)||{};}catch(e){}
   try{const d=localStorage.getItem(DK);if(d)DCOL=JSON.parse(d)||{};}catch(e){}
-  try{const t=localStorage.getItem(STK);if(t)STCOL=JSON.parse(t)||{};}catch(e){}}
+  try{const t=localStorage.getItem(STK);if(t)STCOL=JSON.parse(t)||{};}catch(e){}
+  try{const n=localStorage.getItem(SNK);if(n)SCNCOL=JSON.parse(n)||{};}catch(e){}}
 function sv(){try{localStorage.setItem(SK,JSON.stringify(S))}catch(e){}}
 function saveCol(){try{localStorage.setItem(CK,JSON.stringify(COL))}catch(e){}}
 function saveDcol(){try{localStorage.setItem(DK,JSON.stringify(DCOL))}catch(e){}}
@@ -1023,6 +1074,123 @@ function rTp(){
   c.innerHTML=html;
 }
 
+// RENDER: SCENARIOS
+// Enumerate the group's remaining results (temporarily substituted into state) and record,
+// for every team, the set of finishing positions it can still reach + what each result yields.
+function enumReach(gk,remaining){
+  const CAP=6; // goals per side; ample for goal-difference swings
+  const reach={};
+  G[gk].forEach(t=>reach[t]={ranks:new Set(),hasMatch:false,winAny:false,winTop2:true,drawAny:false,drawTop2:true,lossAny:false,lossTop2:true});
+  remaining.forEach(f=>{reach[f.h].hasMatch=true;reach[f.a].hasMatch=true;});
+  const saved={};remaining.forEach(f=>{saved[f.id]=S.s[f.id];});
+  try{
+    (function rec(i){
+      if(i===remaining.length){
+        const ord=compGroup(gk).standings,rank={};ord.forEach((s,p)=>rank[s.team]=p+1);
+        G[gk].forEach(t=>reach[t].ranks.add(rank[t]));
+        remaining.forEach(f=>{const sc=S.s[f.id],hh=+sc.h,aa=+sc.a;
+          tallyNeed(reach[f.h],hh>aa?'win':(hh<aa?'loss':'draw'),rank[f.h]<=2);
+          tallyNeed(reach[f.a],aa>hh?'win':(aa<hh?'loss':'draw'),rank[f.a]<=2);});
+        return;
+      }
+      const f=remaining[i];
+      for(let h=0;h<=CAP;h++)for(let a=0;a<=CAP;a++){S.s[f.id]={h:String(h),a:String(a)};rec(i+1);}
+    })(0);
+  }finally{
+    remaining.forEach(f=>{if(saved[f.id]===undefined)delete S.s[f.id];else S.s[f.id]=saved[f.id];});
+  }
+  return reach;
+}
+function tallyNeed(r,res,top2){
+  if(res==='win'){r.winAny=true;if(!top2)r.winTop2=false;}
+  else if(res==='draw'){r.drawAny=true;if(!top2)r.drawTop2=false;}
+  else{r.lossAny=true;if(!top2)r.lossTop2=false;}
+}
+function analyzeGroup(gk){
+  const ms=FX.filter(f=>f.g===gk),played=ms.filter(f=>gs(f.id)).length;
+  const order=compGroup(gk).standings,remaining=ms.filter(f=>!gs(f.id));
+  let reach=null;
+  if(remaining.length===0){reach={};order.forEach((s,i)=>reach[s.team]={ranks:new Set([i+1]),hasMatch:false});}
+  else if(remaining.length<=2)reach=enumReach(gk,remaining);
+  return {gk,played,order,reachN:remaining.length,reach};
+}
+function scnStatus(R){
+  const ranks=[...R.ranks].sort((a,b)=>a-b);
+  if(ranks.every(x=>x<=2))return (ranks.length===1&&ranks[0]===1)?{c:'win',l:'Winners'}:{c:'thru',l:'Through'};
+  if(!ranks.some(x=>x<=2))return ranks.includes(3)?{c:'third',l:'3rd hopes',need:'Out of top 2 — needs a best-third spot'}:{c:'out',l:'Out'};
+  let need;
+  if(!R.hasMatch)need='Depends on the other result';
+  else if(R.drawAny&&R.drawTop2)need='A draw secures top 2';
+  else if(R.winAny&&R.winTop2)need='Must win to be sure of top 2';
+  else need='Win, and depends on the other result / goal difference';
+  return {c:'alive',l:'Alive',need:need};
+}
+function renderScnGroup(A){
+  const gk=A.gk;
+  let h='<div class="scn-gc"><div class="scn-gh"><h4><span class="gd g'+gk+'"></span>Group '+gk+'</h4><span class="pl">'+A.played+'/6 played</span></div>';
+  A.order.forEach((s,i)=>{
+    let st;
+    if(A.reach)st=scnStatus(A.reach[s.team]);
+    else st={c:'prov',l:['1st','2nd','3rd','4th'][i]+' now'};
+    h+='<div class="scn-row">'+flg(s.team)+'<span class="nm">'+s.team+'</span><span class="pts">'+s.Pts+'</span><span class="scn-st '+st.c+'">'+st.l+'</span></div>';
+    if(st.need)h+='<div class="scn-need">'+st.need+'</div>';
+  });
+  if(!A.reach)h+='<div class="scn-note">Full scenarios unlock after Matchday 2.</div>';
+  h+='</div>';return h;
+}
+// provisional (no completion gate) resolution for the projected bracket
+function provThirds(){
+  const t=Object.keys(G).map(gk=>Object.assign({grp:gk},compGroup(gk).standings[2]));
+  t.sort((a,b)=>(b.Pts-a.Pts)||(b.GD-a.GD)||(b.GF-a.GF));return t;
+}
+function provResThird(slot){
+  const T=provThirds().slice(0,8),slots=KO.filter(k=>k.r==='R32'&&(k.a.t==='third'||k.b.t==='third'));
+  const used=new Set(),asgn={};
+  slots.forEach(k=>{const s=(k.a.t==='third')?k.a:k.b;for(const x of T){if(used.has(x.team))continue;if(s.p.includes(x.grp)){asgn[k.id]=x.team;used.add(x.team);break;}}});
+  const my=KO.find(k=>(k.a===slot)||(k.b===slot));return my?(asgn[my.id]||null):null;
+}
+function provLabel(slot){
+  if(slot.t==='winner')return compGroup(slot.g).standings[0].team;
+  if(slot.t==='runner')return compGroup(slot.g).standings[1].team;
+  if(slot.t==='third')return provResThird(slot)||('3rd '+slot.p.join('/'));
+  return '?';
+}
+function teamsWithRank(R,rk){return Object.keys(R).filter(t=>R[t].ranks.has(rk));}
+function possSet(slot,reaches){
+  if(slot.t==='winner'){const R=reaches[slot.g];return R?teamsWithRank(R,1):[compGroup(slot.g).standings[0].team];}
+  if(slot.t==='runner'){const R=reaches[slot.g];return R?teamsWithRank(R,2):[compGroup(slot.g).standings[1].team];}
+  if(slot.t==='third'){const set=new Set();slot.p.forEach(gk=>{const R=reaches[gk];if(R)teamsWithRank(R,3).forEach(t=>set.add(t));else set.add(compGroup(gk).standings[2].team);});return [...set];}
+  return [];
+}
+function altList(arr){const cap=4,s=arr.slice(0,cap).map(t=>flg(t)+t).join(', ');return arr.length>cap?s+' +'+(arr.length-cap):s;}
+function rScn(){
+  const reaches={};let gh='';
+  Object.keys(G).sort().forEach(gk=>{const A=analyzeGroup(gk);if(A.reach)reaches[gk]=A.reach;gh+=renderScnGroup(A);});
+  document.getElementById('scnGroups').innerHTML=gh;
+  let bh='';
+  KO.filter(k=>k.r==='R32').forEach(m=>{
+    const aP=provLabel(m.a),bP=provLabel(m.b);
+    const aAlt=possSet(m.a,reaches).filter(t=>t!==aP),bAlt=possSet(m.b,reaches).filter(t=>t!==bP);
+    bh+='<div class="scn-m"><div class="mh">M'+m.id+' · '+fd(m.d,1)+' · '+m.v+'</div>'
+      +'<div class="scn-side">'+flg(aP)+'<span class="nm">'+aP+'</span></div>'
+      +(aAlt.length?'<div class="scn-alt">or '+altList(aAlt)+'</div>':'')
+      +'<div class="scn-vs">vs</div>'
+      +'<div class="scn-side">'+flg(bP)+'<span class="nm">'+bP+'</span></div>'
+      +(bAlt.length?'<div class="scn-alt">or '+altList(bAlt)+'</div>':'')
+      +'</div>';
+  });
+  document.getElementById('scnBracket').innerHTML=bh;
+  applyScnCol();
+}
+function applyScnCol(){
+  document.querySelectorAll('[data-scncol]').forEach(h=>{
+    const key=h.dataset.scncol,col=SCNCOL[key]===true;
+    h.classList.toggle('col',col);
+    const cont=document.getElementById(key==='groups'?'scnGroups':'scnBracket');
+    if(cont)cont.classList.toggle('scn-hide',col);
+  });
+}
+
 // RENDER: KNOCKOUT
 function koLabel(slot){
   if(slot.t==='winner'){const r=compGroup(slot.g);return(r.played===r.total&&r.standings.length>0)?r.standings[0].team:'1'+slot.g;}
@@ -1095,13 +1263,13 @@ function fgd(n){return n>0?'+'+n:String(n);}
 function ev(v){return v==null?'':String(v).replace(/"/g,'&quot;');}
 
 // TABS
-const TABS=[['fixtures','Fixtures'],['standings','Standings'],['third','3rd Place'],['knockout','Knockout'],['rules','Rules']];
+const TABS=[['fixtures','Fixtures'],['standings','Standings'],['third','3rd Place'],['scenarios','Scenarios'],['knockout','Knockout'],['rules','Rules']];
 const strip=document.getElementById('tstrip');
 function selectTab(key){
   strip.querySelectorAll('.tab').forEach((x,i)=>x.classList.toggle('on',TABS[i][0]===key));
   document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
   document.getElementById('p-'+key).classList.add('on');
-  if(key==='standings')rSt();if(key==='third')rTp();if(key==='knockout')rKo();
+  if(key==='standings')rSt();if(key==='third')rTp();if(key==='scenarios')rScn();if(key==='knockout')rKo();
 }
 TABS.forEach(t=>{
   const b=document.createElement('button');b.className='tab'+(t[0]==='fixtures'?' on':'');b.textContent=t[1];
@@ -1205,6 +1373,12 @@ document.getElementById('bStCollapse').onclick=()=>{
   _stAllCol=!_stAllCol;Object.keys(G).forEach(gk=>{STCOL[gk]=_stAllCol;});
   saveStcol();updateStCollapseBtn();rSt();
 };
+// scenarios section collapse toggles
+document.querySelectorAll('[data-scncol]').forEach(h=>h.addEventListener('click',()=>{
+  const key=h.dataset.scncol;SCNCOL[key]=!(SCNCOL[key]===true);
+  try{localStorage.setItem(SNK,JSON.stringify(SCNCOL));}catch(e){}
+  applyScnCol();
+}));
 const sel=document.getElementById('fGrp');Object.keys(G).forEach(g=>{const o=document.createElement('option');o.value=g;o.textContent='Group '+g;sel.appendChild(o);});
 document.getElementById('tzPill').innerHTML='\u{1F550} <b>'+UTZ.split('/').pop().replace(/_/g,' ')+'</b> ('+UAB+')';
 
