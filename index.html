@@ -339,6 +339,33 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
 .fp-in input{font-size:16px;width:40px;height:30px}
 .kp input{font-size:16px;width:44px;height:32px}
 .stsearch{font-size:16px}
+/* KNOCKOUT v2: round selector + vertical cards */
+.kohead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:2px 0 10px}
+.kohead .krt{font-size:1.05rem;font-weight:800;color:var(--navy)}
+.kohead .krt.f{color:var(--gold)}
+.kohead .krd{font-size:.68rem;color:var(--g400);font-weight:700}
+.kolist{display:flex;flex-direction:column;gap:11px;max-width:560px;margin:0 auto}
+.km2{background:var(--card);border:1.5px solid var(--g200);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
+.km2.fin{border:2px solid var(--gold)}
+.km2.next{border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,180,216,.16),var(--sh)}
+.km2-h{display:flex;align-items:center;gap:7px;padding:7px 13px;background:var(--g50);border-bottom:1px solid var(--g100);font-size:.62rem;font-weight:700;color:var(--g500)}
+.km2.fin .km2-h{background:linear-gradient(90deg,rgba(245,158,11,.12),rgba(245,158,11,.02))}
+.km2-h .mno{color:var(--g400)}
+.km2-h .spacer{margin-left:auto}
+.km2-h .loc{text-align:right}
+.km2-row{display:grid;grid-template-columns:1fr 56px;align-items:center;gap:8px;padding:9px 13px}
+.km2-row+.km2-row{border-top:1px solid var(--g50)}
+.km2-team{display:flex;align-items:center;gap:9px;font-size:.96rem;font-weight:700;color:var(--g800);min-width:0}
+.km2-team .flag{font-size:1.25em}
+.km2-team .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.km2-team.ph{color:var(--g400);font-style:italic;font-weight:500}
+.km2-team.win{color:var(--green)}
+.km2-team.win .nm{font-weight:800}
+.km2-score{width:54px;height:46px;text-align:center;font-family:inherit;font-size:1.25rem;font-weight:800;color:var(--navy);background:var(--g50);border:2px solid var(--g200);border-radius:10px;outline:none}
+.km2-score:focus{border-color:var(--teal);background:var(--card);box-shadow:0 0 0 3px rgba(0,180,216,.12)}
+.km2-pen{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:6px 13px 10px;font-size:.62rem;font-weight:700;color:var(--g400);background:var(--g50);border-top:1px dashed var(--g200)}
+.km2-pen input{width:42px;height:30px;text-align:center;font-family:inherit;font-size:16px;font-weight:800;color:var(--g600);background:var(--card);border:1.5px dashed var(--g300);border-radius:7px;outline:none}
+.km2-pen input:focus{border-style:solid;border-color:var(--blue)}
 
 /* DARK MODE */
 body.dark{
@@ -353,7 +380,8 @@ body.dark .dhdr,body.dark .mt-r input,body.dark .ks,body.dark .mh-sc,body.dark .
 body.dark .gc-h h3,body.dark .dh-txt,body.dark .card h3,body.dark .rules h3,
 body.dark .mtime.u b,body.dark .tzpill b,body.dark .kt,body.dark .dnchip .dn-d,
 body.dark .knchip .kn-r,body.dark .st tr.hl .nm,
-body.dark .scn-h,body.dark .scn-gh h4,body.dark .scn-row .pts,body.dark .scn-side{color:var(--g800)}
+body.dark .scn-h,body.dark .scn-gh h4,body.dark .scn-row .pts,body.dark .scn-side,
+body.dark .km2-team,body.dark .km2-score,body.dark .kohead .krt{color:var(--g800)}
 body.dark .mt-r input:focus,body.dark .ks:focus,body.dark .stsearch:focus,
 body.dark .fp-in input:focus,body.dark .kp input:focus{background:var(--g100)}
 body.dark .odds-bar>div{color:#fff}
@@ -458,7 +486,7 @@ body{transition:background-color .2s ease,color .2s ease}
 
   <section class="pnl" id="p-third">
     <div class="card"><h3>Best third-placed teams</h3>
-    <p class="sub">Top 8 advance to the Round of 32. Ranked by points, goal difference, then goals scored. Fair-play and FIFA ranking break remaining ties (not tracked).</p>
+    <p class="sub">Live standings. The current 3rd-placed team of every group that has started is ranked together by points, goal difference, then goals scored &mdash; updating after each match. Top 8 advance to the Round of 32. Rows marked * are still provisional (group in progress).</p>
     <div id="tpBox"></div></div>
   </section>
 
@@ -471,9 +499,8 @@ body{transition:background-color .2s ease,color .2s ease}
   </section>
 
   <section class="pnl" id="p-knockout">
-    <div class="kinfo">Teams fill automatically from group results. Swipe sideways through the rounds. For draws after extra time, record the penalty shootout below the scores.</div>
     <div class="konav" id="koNav"></div>
-    <div class="kwrap" id="koBox"></div>
+    <div id="koBox"></div>
   </section>
 
   <section class="pnl" id="p-rules">
@@ -577,8 +604,8 @@ const FX=[
 {id:32,d:'2026-06-19',g:'D',h:'T\u00fcrkiye',a:'Paraguay',v:'San Francisco',et:'00:00'},
 {id:33,d:'2026-06-20',g:'F',h:'Netherlands',a:'Sweden',v:'Houston',et:'13:00'},
 {id:34,d:'2026-06-20',g:'E',h:'Germany',a:'Ivory Coast',v:'Toronto',et:'16:00'},
-{id:35,d:'2026-06-20',g:'E',h:'Ecuador',a:'Cura\u00e7ao',v:'Kansas City',et:'19:00'},
-{id:36,d:'2026-06-20',g:'F',h:'Tunisia',a:'Japan',v:'Monterrey',et:'22:00'},
+{id:35,d:'2026-06-20',g:'E',h:'Ecuador',a:'Cura\u00e7ao',v:'Kansas City',et:'20:00'},
+{id:36,d:'2026-06-20',g:'F',h:'Tunisia',a:'Japan',v:'Monterrey',et:'00:00'},
 {id:37,d:'2026-06-21',g:'H',h:'Spain',a:'Saudi Arabia',v:'Atlanta',et:'12:00'},
 {id:38,d:'2026-06-21',g:'G',h:'Belgium',a:'Iran',v:'Los Angeles',et:'15:00'},
 {id:39,d:'2026-06-21',g:'H',h:'Uruguay',a:'Cape Verde',v:'Miami',et:'18:00'},
@@ -586,7 +613,7 @@ const FX=[
 {id:41,d:'2026-06-22',g:'J',h:'Argentina',a:'Austria',v:'Dallas',et:'13:00'},
 {id:42,d:'2026-06-22',g:'I',h:'France',a:'Iraq',v:'Philadelphia',et:'17:00'},
 {id:43,d:'2026-06-22',g:'I',h:'Norway',a:'Senegal',v:'New York/NJ',et:'20:00'},
-{id:44,d:'2026-06-22',g:'J',h:'Jordan',a:'Algeria',v:'San Francisco',et:'00:00'},
+{id:44,d:'2026-06-22',g:'J',h:'Jordan',a:'Algeria',v:'San Francisco',et:'23:00'},
 {id:45,d:'2026-06-23',g:'K',h:'Portugal',a:'Uzbekistan',v:'Houston',et:'13:00'},
 {id:46,d:'2026-06-23',g:'L',h:'England',a:'Ghana',v:'Boston',et:'16:00'},
 {id:47,d:'2026-06-23',g:'L',h:'Panama',a:'Croatia',v:'Toronto',et:'19:00'},
@@ -605,16 +632,16 @@ const FX=[
 {id:60,d:'2026-06-25',g:'D',h:'Paraguay',a:'Australia',v:'San Francisco',et:'22:00'},
 {id:61,d:'2026-06-26',g:'I',h:'Norway',a:'France',v:'Boston',et:'15:00'},
 {id:62,d:'2026-06-26',g:'I',h:'Senegal',a:'Iraq',v:'Toronto',et:'15:00'},
-{id:63,d:'2026-06-26',g:'H',h:'Cape Verde',a:'Saudi Arabia',v:'Houston',et:'18:00'},
-{id:64,d:'2026-06-26',g:'H',h:'Uruguay',a:'Spain',v:'Guadalajara',et:'18:00'},
-{id:65,d:'2026-06-26',g:'G',h:'Egypt',a:'Iran',v:'Seattle',et:'21:00'},
-{id:66,d:'2026-06-26',g:'G',h:'New Zealand',a:'Belgium',v:'Vancouver',et:'21:00'},
+{id:63,d:'2026-06-26',g:'H',h:'Cape Verde',a:'Saudi Arabia',v:'Houston',et:'20:00'},
+{id:64,d:'2026-06-26',g:'H',h:'Uruguay',a:'Spain',v:'Guadalajara',et:'20:00'},
+{id:65,d:'2026-06-26',g:'G',h:'Egypt',a:'Iran',v:'Seattle',et:'23:00'},
+{id:66,d:'2026-06-26',g:'G',h:'New Zealand',a:'Belgium',v:'Vancouver',et:'23:00'},
 {id:67,d:'2026-06-27',g:'L',h:'Panama',a:'England',v:'New York/NJ',et:'17:00'},
 {id:68,d:'2026-06-27',g:'L',h:'Croatia',a:'Ghana',v:'Philadelphia',et:'17:00'},
 {id:69,d:'2026-06-27',g:'K',h:'Colombia',a:'Portugal',v:'Miami',et:'19:30'},
 {id:70,d:'2026-06-27',g:'K',h:'DR Congo',a:'Uzbekistan',v:'Atlanta',et:'19:30'},
-{id:71,d:'2026-06-27',g:'J',h:'Algeria',a:'Austria',v:'Kansas City',et:'21:00'},
-{id:72,d:'2026-06-27',g:'J',h:'Jordan',a:'Argentina',v:'Dallas',et:'21:00'}
+{id:71,d:'2026-06-27',g:'J',h:'Algeria',a:'Austria',v:'Kansas City',et:'22:00'},
+{id:72,d:'2026-06-27',g:'J',h:'Jordan',a:'Argentina',v:'Dallas',et:'22:00'}
 ];
 
 const KO=[
@@ -628,9 +655,9 @@ const KO=[
 {id:80,r:'R32',d:'2026-07-01',v:'Atlanta',et:'12:00',a:{t:'winner',g:'L'},b:{t:'third',p:['E','H','I','J','K']}},
 {id:81,r:'R32',d:'2026-07-01',v:'San Francisco',et:'20:00',a:{t:'winner',g:'D'},b:{t:'third',p:['B','E','F','I','J']}},
 {id:82,r:'R32',d:'2026-07-01',v:'Seattle',et:'16:00',a:{t:'winner',g:'G'},b:{t:'third',p:['A','E','H','I','J']}},
-{id:83,r:'R32',d:'2026-07-02',v:'Toronto',et:'15:00',a:{t:'runner',g:'K'},b:{t:'runner',g:'L'}},
-{id:84,r:'R32',d:'2026-07-02',v:'Los Angeles',et:'19:00',a:{t:'winner',g:'H'},b:{t:'runner',g:'J'}},
-{id:85,r:'R32',d:'2026-07-02',v:'Vancouver',et:'21:00',a:{t:'winner',g:'B'},b:{t:'third',p:['E','F','G','I','J']}},
+{id:83,r:'R32',d:'2026-07-02',v:'Toronto',et:'19:00',a:{t:'runner',g:'K'},b:{t:'runner',g:'L'}},
+{id:84,r:'R32',d:'2026-07-02',v:'Los Angeles',et:'15:00',a:{t:'winner',g:'H'},b:{t:'runner',g:'J'}},
+{id:85,r:'R32',d:'2026-07-02',v:'Vancouver',et:'23:00',a:{t:'winner',g:'B'},b:{t:'third',p:['E','F','G','I','J']}},
 {id:86,r:'R32',d:'2026-07-03',v:'Miami',et:'18:00',a:{t:'winner',g:'J'},b:{t:'runner',g:'H'}},
 {id:87,r:'R32',d:'2026-07-03',v:'Kansas City',et:'21:30',a:{t:'winner',g:'K'},b:{t:'third',p:['D','E','I','J','L']}},
 {id:88,r:'R32',d:'2026-07-03',v:'Dallas',et:'14:00',a:{t:'runner',g:'D'},b:{t:'runner',g:'G'}},
@@ -680,6 +707,7 @@ let STCOL={}; // standings group key -> true(collapsed)
 let SCNCOL={}; // scenarios section ('groups'/'bracket') -> true(collapsed)
 let _lastToday=null,_lastNext=null,_allCol=false,_lastKoNext=null,_stAllCol=false;
 let teamFilter=null; // when set, fixtures show only this team's matches
+let koRound=null; // currently selected knockout round in the round-selector view
 function ld(){try{const r=localStorage.getItem(SK)||localStorage.getItem('wc2026_v3');if(r){const p=JSON.parse(r);S.s=p.s||{};S.k=p.k||{};}}catch(e){}
   try{const c=localStorage.getItem(CK);if(c)COL=JSON.parse(c)||{};}catch(e){}
   try{const d=localStorage.getItem(DK);if(d)DCOL=JSON.parse(d)||{};}catch(e){}
@@ -758,27 +786,16 @@ const KORD=['R32','R16','QF','SF','3rd','F'];
 function nextKoId(){const now=Date.now();let id=null,best=Infinity;
   KO.forEach(k=>{if(!k.et)return;const t=toUTC(k.d,k.et).getTime();if(now<t+2.5*3600*1000&&t<best){best=t;id=k.id;}});return id;}
 function koRoundOf(id){const k=KO.find(x=>x.id===id);return k?k.r:null;}
-function scrollToRound(rnd,smooth){const box=document.getElementById('koBox'),col=document.getElementById('ko-'+rnd);if(!box||!col)return;
-  const kn=document.getElementById('koNav');if(kn)kn.classList.remove('hide');
-  const left=col.getBoundingClientRect().left-box.getBoundingClientRect().left+box.scrollLeft;
-  box.scrollTo({left:Math.max(0,left-4),behavior:smooth?'smooth':'auto'});setActiveRound(rnd);}
-function setActiveRound(rnd){const nav=document.getElementById('koNav');if(!nav)return;
-  nav.querySelectorAll('.knchip').forEach(c=>c.classList.toggle('on',c.dataset.round===rnd));
-  centerChip(nav,nav.querySelector('.knchip.on'));}
-function updateKoNavActive(){const box=document.getElementById('koBox');if(!box)return;
-  const bl=box.getBoundingClientRect().left;let cur=KORD[0];
-  KORD.forEach(rnd=>{const col=document.getElementById('ko-'+rnd);if(col&&col.getBoundingClientRect().left-bl<=1)cur=rnd;});
-  setActiveRound(cur);}
-function jumpToKoRound(smooth){const nx=nextKoId();scrollToRound(nx?koRoundOf(nx):'R32',smooth);}
-function buildKoNav(today,nextId){const nav=document.getElementById('koNav');if(!nav)return;
+function shortR(rnd){return RN[rnd].replace('Round of ','R').replace('Quarterfinals','QF').replace('Semifinals','SF').replace('3rd Place','3rd');}
+function jumpToKoRound(smooth){const nx=nextKoId();koRound=nx?koRoundOf(nx):'R32';rKo();window.scrollTo({top:0,behavior:smooth?'smooth':'auto'});}
+function buildKoNav(nextId){const nav=document.getElementById('koNav');if(!nav)return;
   const nextR=nextId?koRoundOf(nextId):null;let h='';
   KORD.forEach(rnd=>{const ms=KO.filter(k=>k.r===rnd),decided=ms.filter(k=>koWin(k.id)).length;
-    h+='<button class="knchip'+(rnd===nextR?' next':'')+(decided===ms.length?' done':'')+'" data-round="'+rnd+'">'
-      +'<span class="kn-r">'+RN[rnd].replace('Round of ','R').replace('Quarterfinals','QF').replace('Semifinals','SF').replace('3rd Place','3rd')+'</span>'
-      +'<span class="kn-c">'+decided+'/'+ms.length+'</span></button>';});
+    h+='<button class="knchip'+(rnd===koRound?' on':'')+(rnd===nextR?' next':'')+(decided===ms.length?' done':'')+'" data-round="'+rnd+'">'
+      +'<span class="kn-r">'+shortR(rnd)+'</span><span class="kn-c">'+decided+'/'+ms.length+'</span></button>';});
   nav.innerHTML=h;
-  nav.querySelectorAll('.knchip').forEach(b=>b.addEventListener('click',()=>scrollToRound(b.dataset.round,true)));
-  updateKoNavActive();}
+  nav.querySelectorAll('.knchip').forEach(b=>b.addEventListener('click',()=>{koRound=b.dataset.round;rKo();window.scrollTo({top:0,behavior:'smooth'});}));
+  const on=nav.querySelector('.knchip.on');if(on)centerChip(nav,on);}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove('show'),1800);}
 
 function gs(id){const s=S.s[id];if(!s)return null;const h=parseInt(s.h,10),a=parseInt(s.a,10);return(isNaN(h)||isNaN(a))?null:{h:h,a:a};}
@@ -1059,18 +1076,25 @@ function rSt(){
 }
 function updateStCollapseBtn(){const b=document.getElementById('bStCollapse');if(b)b.textContent=_stAllCol?'Expand all':'Collapse all';}
 
-// RENDER: THIRD
+// RENDER: THIRD (live: current 3rd-placed team of every started group, ranked together)
+function liveThirds(){
+  const t=[];
+  Object.keys(G).forEach(gk=>{const r=compGroup(gk);if(r.played<1)return;const s=r.standings[2];if(s)t.push(Object.assign({grp:gk,done:r.played===r.total},s));});
+  t.sort((a,b)=>(b.Pts-a.Pts)||(b.GD-a.GD)||(b.GF-a.GF)||(((a.fpSet||b.fpSet)?(b.FP-a.FP):0)));
+  return t;
+}
 function rTp(){
-  const c=document.getElementById('tpBox'),T=rankThirds();
-  if(!T.length){c.innerHTML='<div class="emp">No groups completed yet.<br>Finish all 6 matches in a group to see its 3rd-placed team.</div>';return;}
+  const c=document.getElementById('tpBox'),T=liveThirds();
+  const doneCount=Object.keys(G).filter(gk=>compGroup(gk).played===6).length;
+  if(!T.length){c.innerHTML='<div class="emp">No matches played yet.<br>Third-placed standings update live as games are played.</div>';return;}
   let html='<div class="tpw"><table class="tp"><thead><tr><th>#</th><th>Grp</th><th>Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th></th></tr></thead><tbody>';
   T.forEach((t,i)=>{const q=i<8;
-    html+='<tr class="'+(q?'q':'e')+'"><td>'+(i+1)+'</td><td>'+t.grp+'</td><td>'+flg(t.team)+' '+t.team+'</td>'
+    html+='<tr class="'+(q?'q':'e')+'"><td>'+(i+1)+'</td><td>'+t.grp+(t.done?'':'*')+'</td><td>'+flg(t.team)+' '+t.team+'</td>'
       +'<td>'+t.P+'</td><td>'+t.W+'</td><td>'+t.D+'</td><td>'+t.L+'</td><td>'+t.GF+'</td><td>'+t.GA+'</td><td>'+fgd(t.GD)+'</td><td style="font-weight:800">'+t.Pts+'</td>'
       +'<td><span class="bdg '+(q?'g':'x')+'">'+(q?'In':'Out')+'</span></td></tr>';
   });
   html+='</tbody></table></div>';
-  if(T.length<12)html+='<p style="font-size:.72rem;color:var(--g400);margin-top:10px">'+T.length+' of 12 groups completed.</p>';
+  html+='<p style="font-size:.72rem;color:var(--g400);margin-top:10px">Live &middot; '+T.length+' of 12 groups started, '+doneCount+' complete. Rows with * are provisional until the group finishes.</p>';
   c.innerHTML=html;
 }
 
@@ -1216,38 +1240,47 @@ function koWin(mid){
   return null;
 }
 function isPh(l){return/^[12][A-L]$/.test(l)||l.indexOf('3rd ')===0||/^W\d+$/.test(l)||/^L\d+$/.test(l);}
+function koUpdateCard(mid){ // recompute winner highlight for one card without a full re-render
+  const card=document.querySelector('.km2[data-mid="'+mid+'"]');if(!card)return;
+  const k=KO.find(x=>x.id===mid);if(!k)return;
+  const aL=koLabel(k.a),bL=koLabel(k.b),w=koWin(mid),rows=card.querySelectorAll('.km2-team');
+  if(rows[0])rows[0].classList.toggle('win',!!w&&w===aL);
+  if(rows[1])rows[1].classList.toggle('win',!!w&&w===bL);
+  const chip=document.querySelector('.knchip.on .kn-c');
+  if(chip){const ms=KO.filter(x=>x.r===koRound),dec=ms.filter(x=>koWin(x.id)).length;chip.textContent=dec+'/'+ms.length;}
+}
 function rKo(){
-  const c=document.getElementById('koBox');const sl=c.scrollLeft;
-  const today=todayStr(),nextId=nextKoId();_lastKoNext=nextId;let html='';
-  KORD.forEach(rnd=>{
-    const fin=rnd==='F';
-    html+='<div class="kcol" id="ko-'+rnd+'"><div class="kct '+(fin?'f':'')+'">'+RN[rnd]+'</div>';
-    KO.filter(k=>k.r===rnd).forEach(m=>{
-      const aL=koLabel(m.a),bL=koLabel(m.b),s=S.k[m.id]||{},w=koWin(m.id);
-      const aW=w===aL,bW=w===bL,aP=isPh(aL),bP=isPh(bL);
-      const u=m.et?toUTC(m.d,m.et):null;
-      const tstr=u?(fmtTZ(u,VTZ[m.v]||'America/New_York')+' / '+fmtTZ(u,UTZ)+' '+UAB+' \u00b7 '):'';
-      const isToday=m.d===today,isNext=m.id===nextId;
-      const nb=isNext?'<span class="nbadge">Next</span>':(isToday?'<span class="tbadge">Today</span>':'');
-      html+='<div class="km'+(fin?' fin':'')+(isNext?' next':'')+(isToday?' today':'')+'">'
-        +'<div class="khd"><span>M'+m.id+nb+'</span><span>'+tstr+fd(m.d,1)+' \u00b7 '+m.v+'</span></div>'
-        +'<div class="kr"><span class="kt '+(aP?'ph':'')+' '+(aW?'win':'')+'">'+(!aP?flg(aL):'')+'<span class="nm">'+aL+'</span></span>'
-        +'<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="20" class="ks" data-k="'+m.id+'" data-s="h" value="'+ev(s.h||'')+'"></div>'
-        +'<div class="kr"><span class="kt '+(bP?'ph':'')+' '+(bW?'win':'')+'">'+(!bP?flg(bL):'')+'<span class="nm">'+bL+'</span></span>'
-        +'<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="20" class="ks" data-k="'+m.id+'" data-s="a" value="'+ev(s.a||'')+'"></div>'
-        +'<div class="kp">PEN <input inputmode="numeric" data-k="'+m.id+'" data-s="ph" value="'+ev(s.ph||'')+'" placeholder="\u2013"> \u2013 <input inputmode="numeric" data-k="'+m.id+'" data-s="pa" value="'+ev(s.pa||'')+'" placeholder="\u2013"></div>'
-        +'</div>';
-    });
-    html+='</div>';
+  const c=document.getElementById('koBox');
+  const today=todayStr(),nextId=nextKoId();_lastKoNext=nextId;
+  if(!koRound)koRound=nextId?koRoundOf(nextId):'R32';
+  buildKoNav(nextId);
+  const ms=KO.filter(k=>k.r===koRound),fin=koRound==='F';
+  const dts=[...new Set(ms.map(m=>fd(m.d,1)))];
+  const drange=dts.length>1?dts[0]+' \u2013 '+dts[dts.length-1]:(dts[0]||'');
+  let html='<div class="kohead"><span class="krt'+(fin?' f':'')+'">'+RN[koRound]+'</span><span class="krd">'+drange+'</span></div><div class="kolist">';
+  ms.forEach(m=>{
+    const aL=koLabel(m.a),bL=koLabel(m.b),s=S.k[m.id]||{},w=koWin(m.id);
+    const aW=!!w&&w===aL,bW=!!w&&w===bL,aP=isPh(aL),bP=isPh(bL);
+    const u=m.et?toUTC(m.d,m.et):null;
+    const tstr=u?(fmtTZ(u,VTZ[m.v]||'America/New_York')+' / '+fmtTZ(u,UTZ)+' '+UAB):'';
+    const isToday=m.d===today,isNext=m.id===nextId;
+    const badge=isNext?'<span class="nbadge">Next</span>':(isToday?'<span class="tbadge">Today</span>':'');
+    html+='<div class="km2'+(fin?' fin':'')+(isNext?' next':'')+'" data-mid="'+m.id+'">'
+      +'<div class="km2-h"><span class="mno">M'+m.id+'</span>'+badge+'<span class="spacer"></span><span class="loc">'+fd(m.d,1)+(tstr?' \u00b7 '+tstr:'')+' \u00b7 '+m.v+'</span></div>'
+      +'<div class="km2-row"><span class="km2-team '+(aP?'ph':'')+(aW?' win':'')+'">'+(!aP?flg(aL):'')+'<span class="nm">'+aL+'</span></span>'
+      +'<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="20" class="km2-score" data-k="'+m.id+'" data-s="h" value="'+ev(s.h||'')+'"></div>'
+      +'<div class="km2-row"><span class="km2-team '+(bP?'ph':'')+(bW?' win':'')+'">'+(!bP?flg(bL):'')+'<span class="nm">'+bL+'</span></span>'
+      +'<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="20" class="km2-score" data-k="'+m.id+'" data-s="a" value="'+ev(s.a||'')+'"></div>'
+      +'<div class="km2-pen">PEN <input inputmode="numeric" pattern="[0-9]*" data-k="'+m.id+'" data-s="ph" value="'+ev(s.ph||'')+'" placeholder="\u2013"> \u2013 <input inputmode="numeric" pattern="[0-9]*" data-k="'+m.id+'" data-s="pa" value="'+ev(s.pa||'')+'" placeholder="\u2013"></div>'
+      +'</div>';
   });
+  html+='</div>';
   c.innerHTML=html;
-  c.querySelectorAll('.ks, .kp input').forEach(inp=>inp.addEventListener('input',e=>{
+  c.querySelectorAll('.km2-score, .km2-pen input').forEach(inp=>inp.addEventListener('input',e=>{
     const mid=+e.target.dataset.k,side=e.target.dataset.s;
-    if(!S.k[mid])S.k[mid]={};S.k[mid][side]=e.target.value;sv();rKo();
+    if(!S.k[mid])S.k[mid]={};S.k[mid][side]=e.target.value;sv();koUpdateCard(mid); // no full re-render: keeps focus, no scroll/zoom
   }));
-  buildKoNav(today,nextId);
   syncStickyTop();
-  c.scrollLeft=sl;
   updatePhase();
 }
 function rBmap(){
@@ -1361,11 +1394,9 @@ window.addEventListener('scroll',()=>{
     else if(y<_lastY-5)bar.classList.remove('hide');  // scrolling up -> reveal
   }
   _lastY=y;
-  if(!_spy){_spy=true;requestAnimationFrame(()=>{_spy=false;
-    if(onFx)updateDayNavActive();if(onKo)updateKoNavActive();});}
+  if(onFx&&!_spy){_spy=true;requestAnimationFrame(()=>{_spy=false;updateDayNavActive();});}
 },{passive:true});
 window.addEventListener('resize',syncStickyTop);
-document.getElementById('koBox').addEventListener('scroll',()=>{if(_spy)return;_spy=true;requestAnimationFrame(()=>{_spy=false;updateKoNavActive();});},{passive:true});
 // standings search + collapse
 document.getElementById('stSearch').addEventListener('input',rSt);
 document.getElementById('stSearchX').onclick=()=>{const si=document.getElementById('stSearch');si.value='';rSt();si.focus();};
@@ -1387,7 +1418,14 @@ ld();
 let _theme='light';try{_theme=localStorage.getItem('wc2026_theme')||'light';}catch(e){}
 applyTheme(_theme==='dark');
 rFx();rSt();rBmap();updateCollapseBtn();updateStCollapseBtn();updatePhase();syncStickyTop();
-requestAnimationFrame(()=>requestAnimationFrame(()=>{syncStickyTop();jumpToToday(false);}));
+// once the knockout phase has begun, open the Knockout tab by default
+const KOSTART=KO.reduce((m,k)=>k.d<m?k.d:m,'2999-12-31');
+if(todayStr()>=KOSTART){
+  selectTab('knockout');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{syncStickyTop();window.scrollTo({top:0});}));
+}else{
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{syncStickyTop();jumpToToday(false);}));
+}
 setInterval(refreshLive,60000);
 </script>
 </body>
