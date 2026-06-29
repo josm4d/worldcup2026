@@ -347,7 +347,11 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
 .kolist{display:flex;flex-direction:column;gap:11px;max-width:560px;margin:0 auto}
 .km2{background:var(--card);border:1.5px solid var(--g200);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden}
 .km2.fin{border:2px solid var(--gold)}
-.km2.next{border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,180,216,.16),var(--sh)}
+.km2.today{background:rgba(0,180,216,.05)}
+.km2.today .km2-h{background:rgba(0,180,216,.1)}
+.km2.next{border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,180,216,.16),var(--sh);background:rgba(0,180,216,.08)}
+.km2.next .km2-h{background:rgba(0,180,216,.14)}
+.km2.next .km2-pen{background:rgba(0,180,216,.05)}
 .km2-h{display:flex;align-items:center;gap:7px;padding:7px 13px;background:var(--g50);border-bottom:1px solid var(--g100);font-size:.62rem;font-weight:700;color:var(--g500)}
 .km2.fin .km2-h{background:linear-gradient(90deg,rgba(245,158,11,.12),rgba(245,158,11,.02))}
 .km2-h .mno{color:var(--g400)}
@@ -359,6 +363,9 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
 .km2-team .flag{font-size:1.25em}
 .km2-team .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .km2-team.ph{color:var(--g400);font-style:italic;font-weight:500}
+.km2-team.prov{font-style:italic}
+.prov-mark{color:var(--gold);font-weight:800;font-style:normal;font-size:.8em;vertical-align:super;line-height:0}
+.ko-note{font-size:.66rem;color:var(--g400);max-width:560px;margin:11px auto 0;line-height:1.45}
 .km2-team.win{color:var(--green)}
 .km2-team.win .nm{font-weight:800}
 .km2-score{width:54px;height:46px;text-align:center;font-family:inherit;font-size:1.25rem;font-weight:800;color:var(--navy);background:var(--g50);border:2px solid var(--g200);border-radius:10px;outline:none}
@@ -1219,10 +1226,16 @@ function applyScnCol(){
 function koLabel(slot){
   if(slot.t==='winner'){const r=compGroup(slot.g);return(r.played===r.total&&r.standings.length>0)?r.standings[0].team:'1'+slot.g;}
   if(slot.t==='runner'){const r=compGroup(slot.g);return(r.played===r.total&&r.standings.length>1)?r.standings[1].team:'2'+slot.g;}
-  if(slot.t==='third'){const x=resThird(slot);return x||'3rd '+slot.p.join('/');}
+  if(slot.t==='third'){const x=resThird(slot);if(x)return x;const p=provResThird(slot);return p||('3rd '+slot.p.join('/'));}
   if(slot.t==='kw'){const w=koWin(slot.m);return w||'W'+slot.m;}
   if(slot.t==='kl'){const w=koWin(slot.m);if(!w)return'L'+slot.m;const k=KO.find(x=>x.id===slot.m);const a=koLabel(k.a),b=koLabel(k.b);return a===w?b:a;}
   return'?';
+}
+// a knockout side: its label, whether it's still a placeholder, and whether it's a provisional (unconfirmed) third
+function koSide(slot){
+  const lab=koLabel(slot);
+  const prov=slot.t==='third'&&!isPh(lab)&&!resThird(slot); // resolved provisionally, allocation not yet final
+  return {lab:lab,prov:prov,ph:isPh(lab)};
 }
 function resThird(slot){
   const T=rankThirds();if(T.length<12)return null;const top8=T.slice(0,8);
@@ -1254,31 +1267,44 @@ function rKo(){
   const today=todayStr(),nextId=nextKoId();_lastKoNext=nextId;
   if(!koRound)koRound=nextId?koRoundOf(nextId):'R32';
   buildKoNav(nextId);
-  const ms=KO.filter(k=>k.r===koRound),fin=koRound==='F';
+  const ms=KO.filter(k=>k.r===koRound).sort((a,b)=>toUTC(a.d,a.et)-toUTC(b.d,b.et)),fin=koRound==='F'; // chronological
   const dts=[...new Set(ms.map(m=>fd(m.d,1)))];
   const drange=dts.length>1?dts[0]+' \u2013 '+dts[dts.length-1]:(dts[0]||'');
   let html='<div class="kohead"><span class="krt'+(fin?' f':'')+'">'+RN[koRound]+'</span><span class="krd">'+drange+'</span></div><div class="kolist">';
+  let anyProv=false;
   ms.forEach(m=>{
-    const aL=koLabel(m.a),bL=koLabel(m.b),s=S.k[m.id]||{},w=koWin(m.id);
-    const aW=!!w&&w===aL,bW=!!w&&w===bL,aP=isPh(aL),bP=isPh(bL);
+    const A=koSide(m.a),B=koSide(m.b),s=S.k[m.id]||{},w=koWin(m.id);
+    const aW=!!w&&w===A.lab,bW=!!w&&w===B.lab;if(A.prov||B.prov)anyProv=true;
     const u=m.et?toUTC(m.d,m.et):null;
     const tstr=u?(fmtTZ(u,VTZ[m.v]||'America/New_York')+' / '+fmtTZ(u,UTZ)+' '+UAB):'';
     const isToday=m.d===today,isNext=m.id===nextId;
     const badge=isNext?'<span class="nbadge">Next</span>':(isToday?'<span class="tbadge">Today</span>':'');
-    html+='<div class="km2'+(fin?' fin':'')+(isNext?' next':'')+'" data-mid="'+m.id+'">'
+    html+='<div class="km2'+(fin?' fin':'')+(isNext?' next':'')+(isToday?' today':'')+'" data-mid="'+m.id+'">'
       +'<div class="km2-h"><span class="mno">M'+m.id+'</span>'+badge+'<span class="spacer"></span><span class="loc">'+fd(m.d,1)+(tstr?' \u00b7 '+tstr:'')+' \u00b7 '+m.v+'</span></div>'
-      +'<div class="km2-row"><span class="km2-team '+(aP?'ph':'')+(aW?' win':'')+'">'+(!aP?flg(aL):'')+'<span class="nm">'+aL+'</span></span>'
+      +'<div class="km2-row"><span class="km2-team '+(A.ph?'ph':'')+(A.prov?' prov':'')+(aW?' win':'')+'">'+(!A.ph?flg(A.lab):'')+'<span class="nm">'+A.lab+(A.prov?'<sup class="prov-mark">*</sup>':'')+'</span></span>'
       +'<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="20" class="km2-score" data-k="'+m.id+'" data-s="h" value="'+ev(s.h||'')+'"></div>'
-      +'<div class="km2-row"><span class="km2-team '+(bP?'ph':'')+(bW?' win':'')+'">'+(!bP?flg(bL):'')+'<span class="nm">'+bL+'</span></span>'
+      +'<div class="km2-row"><span class="km2-team '+(B.ph?'ph':'')+(B.prov?' prov':'')+(bW?' win':'')+'">'+(!B.ph?flg(B.lab):'')+'<span class="nm">'+B.lab+(B.prov?'<sup class="prov-mark">*</sup>':'')+'</span></span>'
       +'<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="20" class="km2-score" data-k="'+m.id+'" data-s="a" value="'+ev(s.a||'')+'"></div>'
       +'<div class="km2-pen">PEN <input inputmode="numeric" pattern="[0-9]*" data-k="'+m.id+'" data-s="ph" value="'+ev(s.ph||'')+'" placeholder="\u2013"> \u2013 <input inputmode="numeric" pattern="[0-9]*" data-k="'+m.id+'" data-s="pa" value="'+ev(s.pa||'')+'" placeholder="\u2013"></div>'
       +'</div>';
   });
   html+='</div>';
+  if(anyProv)html+='<p class="ko-note"><sup class="prov-mark">*</sup> Provisional third-placed opponent from current standings &mdash; not yet confirmed to qualify. The final third-place allocation is set once every group finishes.</p>';
   c.innerHTML=html;
+  let _koAdv=null;
+  function koAdvance(card,el){ // chain home -> away -> pen home -> pen away, stop at last (same as fixtures)
+    clearTimeout(_koAdv);
+    _koAdv=setTimeout(()=>{
+      if(document.activeElement!==el)return; // don't steal focus if the user moved on
+      const ins=[...card.querySelectorAll('input[data-k]')]; // DOM order: h, a, ph, pa
+      const i=ins.indexOf(el);
+      if(i>=0&&i<ins.length-1){const nx=ins[i+1];if(nx.value===''){nx.focus();if(nx.select)nx.select();}}
+    },350);
+  }
   c.querySelectorAll('.km2-score, .km2-pen input').forEach(inp=>inp.addEventListener('input',e=>{
     const mid=+e.target.dataset.k,side=e.target.dataset.s;
     if(!S.k[mid])S.k[mid]={};S.k[mid][side]=e.target.value;sv();koUpdateCard(mid); // no full re-render: keeps focus, no scroll/zoom
+    if(e.target.value!=='')koAdvance(e.target.closest('.km2'),e.target);
   }));
   syncStickyTop();
   updatePhase();
