@@ -373,6 +373,26 @@ main{max-width:1280px;margin:0 auto;padding:6px 10px calc(44px + var(--safe-b))}
 .km2-pen{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:6px 13px 10px;font-size:.62rem;font-weight:700;color:var(--g400);background:var(--g50);border-top:1px dashed var(--g200)}
 .km2-pen input{width:42px;height:30px;text-align:center;font-family:inherit;font-size:16px;font-weight:800;color:var(--g600);background:var(--card);border:1.5px dashed var(--g300);border-radius:7px;outline:none}
 .km2-pen input:focus{border-style:solid;border-color:var(--blue)}
+/* collapsed knockout card */
+.km2-cc{display:flex;align-items:center;gap:8px;padding:9px 13px;cursor:pointer}
+.km2-cc .mno{font-size:.56rem;font-weight:700;color:var(--g400);flex-shrink:0}
+.km2-cc .km2-cs{flex:1;display:flex;align-items:center;gap:6px;min-width:0;font-size:.84rem;font-weight:600;color:var(--g600)}
+.km2-cc .km2-cs.r{justify-content:flex-end;text-align:right}
+.km2-cc .km2-cs.win{color:var(--green);font-weight:800}
+.km2-cc .km2-cs .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.km2-cc .km2-cs .flag{font-size:1.15em;flex-shrink:0}
+.km2-cc .km2-csc{flex-shrink:0;font-size:.82rem;font-weight:800;color:var(--navy);background:var(--g100);padding:2px 9px;border-radius:7px;font-variant-numeric:tabular-nums}
+.km2-cc .km2-csc .pp{font-size:.78em;font-weight:700;color:var(--g500)}
+.km2-cc .km2-cx{flex-shrink:0;font-size:.58rem;font-weight:700;color:var(--g400)}
+.km2-coll{margin-left:8px;flex-shrink:0;font-size:.56rem;font-weight:700;color:var(--g500);background:var(--g100);border:none;padding:3px 8px;border-radius:6px;cursor:pointer;font-family:inherit}
+.km2-coll:active{background:var(--g200)}
+/* potential matchup (upcoming round) */
+.km2-team.pot{align-items:center}
+.km2-team.pot .pot-pair{display:flex;flex-direction:column;gap:1px;min-width:0}
+.km2-team.pot .pot-line{display:flex;align-items:center;gap:7px;font-size:.84rem;font-weight:600;color:var(--g600);min-width:0}
+.km2-team.pot .pot-line .flag{font-size:1.1em;flex-shrink:0}
+.km2-team.pot .pot-line .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.km2-team.pot .pot-or{font-size:.5rem;font-weight:800;text-transform:uppercase;color:var(--g300);letter-spacing:.06em;margin:1px 0}
 
 /* DARK MODE */
 body.dark{
@@ -388,7 +408,7 @@ body.dark .gc-h h3,body.dark .dh-txt,body.dark .card h3,body.dark .rules h3,
 body.dark .mtime.u b,body.dark .tzpill b,body.dark .kt,body.dark .dnchip .dn-d,
 body.dark .knchip .kn-r,body.dark .st tr.hl .nm,
 body.dark .scn-h,body.dark .scn-gh h4,body.dark .scn-row .pts,body.dark .scn-side,
-body.dark .km2-team,body.dark .km2-score,body.dark .kohead .krt{color:var(--g800)}
+body.dark .km2-team,body.dark .km2-score,body.dark .kohead .krt,body.dark .km2-cc .km2-csc{color:var(--g800)}
 body.dark .mt-r input:focus,body.dark .ks:focus,body.dark .stsearch:focus,
 body.dark .fp-in input:focus,body.dark .kp input:focus{background:var(--g100)}
 body.dark .odds-bar>div{color:#fff}
@@ -710,11 +730,13 @@ const CK='wc2026_col_v4';
 const DK='wc2026_day_v4';
 const STK='wc2026_stcol_v4';
 const SNK='wc2026_scncol_v4';
+const KCK='wc2026_kocol_v4';
 let S={s:{},k:{}};
 let COL={};  // match id -> true(collapsed)/false(forced open). default: collapse when filled
 let DCOL={}; // day key -> true(collapsed)/false(open). default: collapse past, fully-filled days
 let STCOL={}; // standings group key -> true(collapsed)
 let SCNCOL={}; // scenarios section ('groups'/'bracket') -> true(collapsed)
+let KCOL={}; // knockout match id -> true(collapsed)/false(open). default: collapse played past matches
 let _lastToday=null,_lastNext=null,_allCol=false,_lastKoNext=null,_stAllCol=false;
 let teamFilter=null; // when set, fixtures show only this team's matches
 let koRound=null; // currently selected knockout round in the round-selector view
@@ -722,11 +744,13 @@ function ld(){try{const r=localStorage.getItem(SK)||localStorage.getItem('wc2026
   try{const c=localStorage.getItem(CK);if(c)COL=JSON.parse(c)||{};}catch(e){}
   try{const d=localStorage.getItem(DK);if(d)DCOL=JSON.parse(d)||{};}catch(e){}
   try{const t=localStorage.getItem(STK);if(t)STCOL=JSON.parse(t)||{};}catch(e){}
-  try{const n=localStorage.getItem(SNK);if(n)SCNCOL=JSON.parse(n)||{};}catch(e){}}
+  try{const n=localStorage.getItem(SNK);if(n)SCNCOL=JSON.parse(n)||{};}catch(e){}
+  try{const kc=localStorage.getItem(KCK);if(kc)KCOL=JSON.parse(kc)||{};}catch(e){}}
 function sv(){try{localStorage.setItem(SK,JSON.stringify(S))}catch(e){}}
 function saveCol(){try{localStorage.setItem(CK,JSON.stringify(COL))}catch(e){}}
 function saveDcol(){try{localStorage.setItem(DK,JSON.stringify(DCOL))}catch(e){}}
 function saveStcol(){try{localStorage.setItem(STK,JSON.stringify(STCOL))}catch(e){}}
+function saveKcol(){try{localStorage.setItem(KCK,JSON.stringify(KCOL))}catch(e){}}
 
 // TODAY / NEXT-MATCH / SCROLL HELPERS
 function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -797,7 +821,18 @@ function nextKoId(){const now=Date.now();let id=null,best=Infinity;
   KO.forEach(k=>{if(!k.et)return;const t=toUTC(k.d,k.et).getTime();if(now<t+2.5*3600*1000&&t<best){best=t;id=k.id;}});return id;}
 function koRoundOf(id){const k=KO.find(x=>x.id===id);return k?k.r:null;}
 function shortR(rnd){return RN[rnd].replace('Round of ','R').replace('Quarterfinals','QF').replace('Semifinals','SF').replace('3rd Place','3rd');}
-function jumpToKoRound(smooth){const nx=nextKoId();koRound=nx?koRoundOf(nx):'R32';rKo();window.scrollTo({top:0,behavior:smooth?'smooth':'auto'});}
+function koStickyOffset(){let o=0;const tb=document.querySelector('.topbar');if(tb)o+=tb.offsetHeight;const kn=document.getElementById('koNav');if(kn&&!kn.classList.contains('hide'))o+=kn.offsetHeight;return o+8;}
+function scrollToKoMatch(id,smooth){
+  const kn=document.getElementById('koNav');if(kn)kn.classList.remove('hide');
+  const el=document.querySelector('.km2[data-mid="'+id+'"]');
+  if(!el){window.scrollTo({top:0,behavior:smooth?'smooth':'auto'});return;}
+  const y=el.getBoundingClientRect().top+window.pageYOffset-koStickyOffset();
+  window.scrollTo({top:Math.max(0,y),behavior:smooth?'smooth':'auto'});
+}
+function jumpToKoRound(smooth){
+  const nx=nextKoId();koRound=nx?koRoundOf(nx):(koRound||'F');rKo();
+  if(nx)scrollToKoMatch(nx,smooth);else window.scrollTo({top:0,behavior:smooth?'smooth':'auto'});
+}
 function buildKoNav(nextId){const nav=document.getElementById('koNav');if(!nav)return;
   const nextR=nextId?koRoundOf(nextId):null;let h='';
   KORD.forEach(rnd=>{const ms=KO.filter(k=>k.r===rnd),decided=ms.filter(k=>koWin(k.id)).length;
@@ -1233,7 +1268,12 @@ function koLabel(slot){
 function koSide(slot){
   const lab=koLabel(slot);
   const prov=slot.t==='third'&&!isPh(lab)&&!resThird(slot); // resolved provisionally, allocation not yet final
-  return {lab:lab,prov:prov,ph:isPh(lab)};
+  let pot=null; // potential feeders for an undecided winner/loser slot whose source match teams are known
+  if(isPh(lab)&&(slot.t==='kw'||slot.t==='kl')){
+    const k=KO.find(x=>x.id===slot.m);
+    if(k){const a=koLabel(k.a),b=koLabel(k.b);if(!isPh(a)&&!isPh(b))pot=[a,b];}
+  }
+  return {lab:lab,prov:prov,ph:isPh(lab),pot:pot};
 }
 function slotWinnerGroup(slot){const k=KO.find(x=>x.a===slot||x.b===slot);if(!k)return null;const o=(k.a===slot)?k.b:k.a;return o.t==='winner'?o.g:null;}
 function allocThird(slot,ranked){ // official Annex C lookup; ranked = the 12 ranked thirds (real or provisional)
@@ -1262,14 +1302,24 @@ function koUpdateCard(mid){ // recompute winner highlight for one card without a
   const chip=document.querySelector('.knchip.on .kn-c');
   if(chip){const ms=KO.filter(x=>x.r===koRound),dec=ms.filter(x=>koWin(x.id)).length;chip.textContent=dec+'/'+ms.length;}
 }
+function koTeamHtml(side,win){
+  if(side.pot){
+    return '<span class="km2-team pot"><span class="pot-pair">'
+      +'<span class="pot-line">'+flg(side.pot[0])+'<span class="nm">'+side.pot[0]+'</span></span>'
+      +'<span class="pot-or">or</span>'
+      +'<span class="pot-line">'+flg(side.pot[1])+'<span class="nm">'+side.pot[1]+'</span></span>'
+      +'</span></span>';
+  }
+  return '<span class="km2-team '+(side.ph?'ph':'')+(side.prov?' prov':'')+(win?' win':'')+'">'+(!side.ph?flg(side.lab):'')+'<span class="nm">'+side.lab+(side.prov?'<sup class="prov-mark">*</sup>':'')+'</span></span>';
+}
 function rKo(){
   const c=document.getElementById('koBox');
-  const today=todayStr(),nextId=nextKoId();_lastKoNext=nextId;
+  const today=todayStr(),nextId=nextKoId();_lastKoNext=nextId;const now=Date.now();
   if(!koRound)koRound=nextId?koRoundOf(nextId):'R32';
   buildKoNav(nextId);
-  const ms=KO.filter(k=>k.r===koRound).sort((a,b)=>toUTC(a.d,a.et)-toUTC(b.d,b.et)),fin=koRound==='F'; // chronological
+  const ms=KO.filter(k=>k.r===koRound).sort((a,b)=>toUTC(a.d,a.et)-toUTC(b.d,b.et)),fin=koRound==='F';
   const dts=[...new Set(ms.map(m=>fd(m.d,1)))];
-  const drange=dts.length>1?dts[0]+' \u2013 '+dts[dts.length-1]:(dts[0]||'');
+  const drange=dts.length>1?dts[0]+' – '+dts[dts.length-1]:(dts[0]||'');
   let html='<div class="kohead"><span class="krt'+(fin?' f':'')+'">'+RN[koRound]+'</span><span class="krd">'+drange+'</span></div><div class="kolist">';
   let anyProv=false;
   ms.forEach(m=>{
@@ -1279,32 +1329,52 @@ function rKo(){
     const tstr=u?(fmtTZ(u,VTZ[m.v]||'America/New_York')+' / '+fmtTZ(u,UTZ)+' '+UAB):'';
     const isToday=m.d===today,isNext=m.id===nextId;
     const badge=isNext?'<span class="nbadge">Next</span>':(isToday?'<span class="tbadge">Today</span>':'');
+    const played=(s.h!==undefined&&s.h!==''&&s.a!==undefined&&s.a!=='');
+    const isPast=u?u.getTime()<now:false;
+    let collapsed=KCOL[m.id];if(collapsed===undefined)collapsed=played&&isPast&&!isNext;
+    const penTxt=(s.ph!==undefined&&s.ph!==''&&s.pa!==undefined&&s.pa!=='')?(' <span class="pp">('+ev(s.ph)+'-'+ev(s.pa)+'p)</span>'):'';
+    if(collapsed){
+      html+='<div class="km2 col'+(fin?' fin':'')+'" data-mid="'+m.id+'">'
+        +'<div class="km2-cc" data-koexp="'+m.id+'"><span class="mno">M'+m.id+'</span>'
+        +'<span class="km2-cs '+(aW?'win':'')+'">'+(!A.ph?flg(A.lab):'')+'<span class="nm">'+A.lab+'</span></span>'
+        +'<span class="km2-csc">'+ev(s.h)+'–'+ev(s.a)+penTxt+'</span>'
+        +'<span class="km2-cs r '+(bW?'win':'')+'"><span class="nm">'+B.lab+'</span>'+(!B.ph?flg(B.lab):'')+'</span>'
+        +'<span class="km2-cx">view</span></div></div>';
+      return;
+    }
+    const collBtn=played?'<button class="km2-coll" data-kocol="'+m.id+'">collapse</button>':'';
     html+='<div class="km2'+(fin?' fin':'')+(isNext?' next':'')+(isToday?' today':'')+'" data-mid="'+m.id+'">'
-      +'<div class="km2-h"><span class="mno">M'+m.id+'</span>'+badge+'<span class="spacer"></span><span class="loc">'+fd(m.d,1)+(tstr?' \u00b7 '+tstr:'')+' \u00b7 '+m.v+'</span></div>'
-      +'<div class="km2-row"><span class="km2-team '+(A.ph?'ph':'')+(A.prov?' prov':'')+(aW?' win':'')+'">'+(!A.ph?flg(A.lab):'')+'<span class="nm">'+A.lab+(A.prov?'<sup class="prov-mark">*</sup>':'')+'</span></span>'
+      +'<div class="km2-h"><span class="mno">M'+m.id+'</span>'+badge+'<span class="spacer"></span><span class="loc">'+fd(m.d,1)+(tstr?' · '+tstr:'')+' · '+m.v+'</span>'+collBtn+'</div>'
+      +'<div class="km2-row">'+koTeamHtml(A,aW)
       +'<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="20" class="km2-score" data-k="'+m.id+'" data-s="h" value="'+ev(s.h||'')+'"></div>'
-      +'<div class="km2-row"><span class="km2-team '+(B.ph?'ph':'')+(B.prov?' prov':'')+(bW?' win':'')+'">'+(!B.ph?flg(B.lab):'')+'<span class="nm">'+B.lab+(B.prov?'<sup class="prov-mark">*</sup>':'')+'</span></span>'
+      +'<div class="km2-row">'+koTeamHtml(B,bW)
       +'<input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="20" class="km2-score" data-k="'+m.id+'" data-s="a" value="'+ev(s.a||'')+'"></div>'
-      +'<div class="km2-pen">PEN <input inputmode="numeric" pattern="[0-9]*" data-k="'+m.id+'" data-s="ph" value="'+ev(s.ph||'')+'" placeholder="\u2013"> \u2013 <input inputmode="numeric" pattern="[0-9]*" data-k="'+m.id+'" data-s="pa" value="'+ev(s.pa||'')+'" placeholder="\u2013"></div>'
+      +'<div class="km2-pen">PEN <input inputmode="numeric" pattern="[0-9]*" data-k="'+m.id+'" data-s="ph" value="'+ev(s.ph||'')+'" placeholder="–"> – <input inputmode="numeric" pattern="[0-9]*" data-k="'+m.id+'" data-s="pa" value="'+ev(s.pa||'')+'" placeholder="–"></div>'
       +'</div>';
   });
   html+='</div>';
-  if(anyProv)html+='<p class="ko-note"><sup class="prov-mark">*</sup> Provisional third-placed opponent from current standings &mdash; not yet confirmed to qualify. The final third-place allocation is set once every group finishes.</p>';
+  if(anyProv)html+='<p class="ko-note"><sup class="prov-mark">*</sup> Provisional third-placed opponent from current standings — not yet confirmed to qualify. The final third-place allocation is set once every group finishes.</p>';
   c.innerHTML=html;
   let _koAdv=null;
-  function koAdvance(card,el){ // chain home -> away -> pen home -> pen away, stop at last (same as fixtures)
+  function koAdvance(card,el){
     clearTimeout(_koAdv);
     _koAdv=setTimeout(()=>{
-      if(document.activeElement!==el)return; // don't steal focus if the user moved on
-      const ins=[...card.querySelectorAll('input[data-k]')]; // DOM order: h, a, ph, pa
+      if(document.activeElement!==el)return;
+      const ins=[...card.querySelectorAll('input[data-k]')];
       const i=ins.indexOf(el);
       if(i>=0&&i<ins.length-1){const nx=ins[i+1];if(nx.value===''){nx.focus();if(nx.select)nx.select();}}
     },350);
   }
   c.querySelectorAll('.km2-score, .km2-pen input').forEach(inp=>inp.addEventListener('input',e=>{
     const mid=+e.target.dataset.k,side=e.target.dataset.s;
-    if(!S.k[mid])S.k[mid]={};S.k[mid][side]=e.target.value;sv();koUpdateCard(mid); // no full re-render: keeps focus, no scroll/zoom
+    if(!S.k[mid])S.k[mid]={};S.k[mid][side]=e.target.value;sv();koUpdateCard(mid);
     if(e.target.value!=='')koAdvance(e.target.closest('.km2'),e.target);
+  }));
+  c.querySelectorAll('[data-koexp]').forEach(el=>el.addEventListener('click',()=>{
+    const id=+el.dataset.koexp;KCOL[id]=false;saveKcol();const y=window.pageYOffset;rKo();window.scrollTo({top:y});
+  }));
+  c.querySelectorAll('[data-kocol]').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();const id=+b.dataset.kocol;KCOL[id]=true;saveKcol();const y=window.pageYOffset;rKo();window.scrollTo({top:y});
   }));
   syncStickyTop();
   updatePhase();
@@ -1335,7 +1405,7 @@ TABS.forEach(t=>{
   b.addEventListener('click',()=>{
     selectTab(t[0]);
     if(t[0]==='fixtures'){jumpToToday(true);}
-    else if(t[0]==='knockout'){window.scrollTo({top:0,behavior:'smooth'});jumpToKoRound(true);}
+    else if(t[0]==='knockout'){jumpToKoRound(true);}
     else{window.scrollTo({top:0,behavior:'smooth'});}
   });
   strip.appendChild(b);
@@ -1448,7 +1518,7 @@ rFx();rSt();rBmap();updateCollapseBtn();updateStCollapseBtn();updatePhase();sync
 const KOSTART=KO.reduce((m,k)=>k.d<m?k.d:m,'2999-12-31');
 if(todayStr()>=KOSTART){
   selectTab('knockout');
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{syncStickyTop();window.scrollTo({top:0});}));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{syncStickyTop();const nx=nextKoId();if(nx)scrollToKoMatch(nx,false);else window.scrollTo({top:0});}));
 }else{
   requestAnimationFrame(()=>requestAnimationFrame(()=>{syncStickyTop();jumpToToday(false);}));
 }
